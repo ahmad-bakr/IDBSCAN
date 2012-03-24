@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-public class ChameleonModified {
+public class ChameleonModified implements DatasetsIF{
 	
 	/**
 	 * Load dataset points from the file
