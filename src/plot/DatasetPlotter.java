@@ -24,6 +24,10 @@ public class DatasetPlotter extends ApplicationFrame{
 		super(title);
 	}
 	
+	/**
+	 * Draw the dataset
+	 * @param clustersHash clusters hash
+	 */
 	public void plot(Hashtable<String, ArrayList<DatasetPoint>> clustersHash){
 		XYSeriesCollection datasetCollection = new XYSeriesCollection();
 		Enumeration keys = clustersHash.keys();
