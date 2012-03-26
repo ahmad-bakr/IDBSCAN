@@ -4,11 +4,29 @@ public class DatasetPoint {
 	private double x;
 	private double y;
 	private String originalCluster;
+	private String assignedCluster;
+	private boolean isVisited;
+	private boolean isNoise;
 	
 	public DatasetPoint(String cluster, double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.originalCluster = cluster;
+		this.isVisited = false;
+		this.isNoise = false;
+		this.assignedCluster="";
+	}
+	
+	public void setVisited(boolean isVisited) {
+		this.isVisited = isVisited;
+	}
+	
+	public void setNoise(boolean isNoise) {
+		this.isNoise = isNoise;
+	}
+	
+	public void setAssignedCluster(String assignedCluster) {
+		this.assignedCluster = assignedCluster;
 	}
 	
 	public void setX(double x) {
@@ -34,5 +52,19 @@ public class DatasetPoint {
 	public String getOriginalCluster() {
 		return originalCluster;
 	}
+	
+	public String getAssignedCluster() {
+		return assignedCluster;
+	}
+	
+	public boolean getIsNoise(){
+		return this.isNoise;
+	}
+	
+	public boolean getIsVisited(){
+		return this.isVisited;
+	}
+	
+
 
 }

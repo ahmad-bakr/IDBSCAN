@@ -34,6 +34,25 @@ public class ChameleonData implements DatasetsIF{
 		return clustersHash;
 	}
 	
+	/**
+	 * load dataset as array list
+	 */
+	@Override
+	public ArrayList<DatasetPoint> loadArrayList(String path) throws IOException {
+		ArrayList<DatasetPoint> dataset = new ArrayList<DatasetPoint>();
+	  FileInputStream fstream = new FileInputStream(path);
+	  DataInputStream in = new DataInputStream(fstream);
+	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	  String strLine;
+	  while ((strLine = br.readLine()) != null)   {
+	   String [] tokens = strLine.split(" ");
+	   String clusterID = "1";
+	   DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]));
+	   dataset.add(p);
+	  }
+		return dataset;
+	}
+
 	public static void main(String[] args) throws IOException {
 		ChameleonData dataset = new ChameleonData();
 		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");

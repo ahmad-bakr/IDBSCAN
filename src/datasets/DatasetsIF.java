@@ -6,4 +6,5 @@ import java.util.Hashtable;
 
 public interface DatasetsIF {
 	Hashtable<String, ArrayList<DatasetPoint>> load (String path) throws IOException;
+	ArrayList<DatasetPoint> loadArrayList (String path)throws IOException;
 }

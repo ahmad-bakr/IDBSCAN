@@ -49,4 +49,10 @@ public class ChameleonModified implements DatasetsIF{
 			System.out.println("Cluster "+ clusterID + " has "+ clustersHash.get(clusterID).size() +" points");
 		}
 	}
+
+	@Override
+	public ArrayList<DatasetPoint> loadArrayList(String path) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
