@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import org.jfree.ui.RefineryUtilities;
+
+import plot.DatasetPlotter;
+
 import datasets.ChameleonData;
 import datasets.DatasetPoint;
 import datasets.DatasetsIF;
@@ -16,6 +20,7 @@ public class DBSCAN {
 	public DBSCAN(ArrayList<DatasetPoint> dataset) {
 		this.distanceMatrix = new Hashtable<DatasetPoint, ArrayList<Double>>();
 		this.dataset = dataset;
+		System.out.println("Calculating the Distance Matrix, Number of points = " + dataset.size());
 		calculateDistanceMatrix(dataset);
 	}
 	
@@ -28,7 +33,9 @@ public class DBSCAN {
 	public void run( double eps, int minPts){
 		int clusterLabel = 0;
 		for (int i = 0; i < dataset.size(); i++) {
+			System.out.println(i);
 			DatasetPoint point = dataset.get(i);
+			if (point.getIsVisited()) continue;
 			point.setVisited(true);
 			ArrayList<DatasetPoint> regionQuery = getRegionQuery(point, eps);
 			if(regionQuery.size() < minPts){
@@ -92,6 +99,7 @@ public class DBSCAN {
 	 */
 	public void calculateDistanceMatrix(ArrayList<DatasetPoint> dataset){
 		for (int i = 0; i < dataset.size(); i++) {
+			System.out.println(i);
 			DatasetPoint currentPoint = dataset.get(i);
 			ArrayList<Double> distanceRecord = new ArrayList<Double>();
 			for (int j = 0; j < dataset.size(); j++) {
@@ -114,13 +122,19 @@ public class DBSCAN {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		double eps = 5;
-		int minPts= 4;
+		double eps = 15;
+		int minPts= 25;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t4.8k.dat");
 		DBSCAN dbscan = new DBSCAN(dataset);
 		dbscan.run(eps, minPts);
-		//modify the plotter to take arrayList
+
+		DatasetPlotter plotter = new DatasetPlotter("Clusters");
+		plotter.plotList(dataset);
+		plotter.pack();
+		RefineryUtilities.centerFrameOnScreen(plotter);
+		plotter.setVisible(true); 
+
 	}
 
 	

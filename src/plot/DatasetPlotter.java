@@ -48,6 +48,23 @@ public class DatasetPlotter extends ApplicationFrame{
 
 	}
 	
+	public void plotList (ArrayList<DatasetPoint> dataset){
+		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = new Hashtable<String, ArrayList<DatasetPoint>>();
+		for (int i = 0; i < dataset.size(); i++) {
+			DatasetPoint point = dataset.get(i);
+			if (point.getIsNoise()) continue;
+			if (clustersHash.containsKey(point.getAssignedCluster())){
+				clustersHash.get(point.getAssignedCluster()).add(point);
+			}else{
+				ArrayList<DatasetPoint> list = new ArrayList<DatasetPoint>();
+				list.add(point);
+				clustersHash.put(point.getAssignedCluster(), list);
+			}
+		}
+		System.out.println("Number of clusters = "+ clustersHash.keySet().size());
+		plot(clustersHash);
+	}
+	
 	public static void main(String[] args) throws IOException {
 		DatasetsIF dataset = new ChameleonModified();
 		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
