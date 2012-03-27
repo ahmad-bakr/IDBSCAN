@@ -1,8 +1,10 @@
 package clustering.algorithms;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import datasets.ChameleonData;
 import datasets.DatasetPoint;
 import datasets.DatasetsIF;
 
@@ -111,29 +113,14 @@ public class DBSCAN {
 		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 	}
 	
-	public static void main(String[] args) {
-		ArrayList<Integer> list1 =  new ArrayList<Integer>();
-		ArrayList<Integer> list2 =  new ArrayList<Integer>();
-		list1.add(1);
-		list1.add(2);
-		list1.add(3);
-		list1.add(4);
-		list1.add(5);
-		
-		list1.add(6);
-		list1.add(7);
-		list1.add(8);
-		list1.add(9);
-		list1.add(10);
-		
-		boolean add = false;
-		for (int i = 0; i < list1.size(); i++) {
-			if(i >2 && !add){
-				list1.addAll(list2);
-			}
-			System.out.println(list1.get(i));
-		}
-
+	public static void main(String[] args) throws IOException {
+		double eps = 5;
+		int minPts= 4;
+		ChameleonData datasetLoader = new ChameleonData();
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t4.8k.dat");
+		DBSCAN dbscan = new DBSCAN(dataset);
+		dbscan.run(eps, minPts);
+		//modify the plotter to take arrayList
 	}
 
 	
