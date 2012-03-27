@@ -7,7 +7,6 @@ import datasets.DatasetPoint;
 import datasets.DatasetsIF;
 
 public class DBSCAN {
-
 	
 	private Hashtable<DatasetPoint, ArrayList<Double>> distanceMatrix;
 	private ArrayList<DatasetPoint> dataset;
@@ -18,36 +17,9 @@ public class DBSCAN {
 		calculateDistanceMatrix(dataset);
 	}
 	
-	/**
-	 * calculate the distance matrix between all the points
-	 * @param dataset dataset
-	 */
-	public void calculateDistanceMatrix(ArrayList<DatasetPoint> dataset){
-		for (int i = 0; i < dataset.size(); i++) {
-			DatasetPoint currentPoint = dataset.get(i);
-			ArrayList<Double> distanceRecord = new ArrayList<Double>();
-			for (int j = 0; j < dataset.size(); j++) {
-				distanceRecord.add(calculateDistanceBtwTwoPoints(currentPoint, dataset.get(j)));
-			}
-			this.distanceMatrix.put(currentPoint, distanceRecord);
-		}
-	}
-	
-	/**
-	 * calculate the Euclidean Distance between two points
-	 * @param p1 point 1
-	 * @param p2 point 2
-	 * @return Distance
-	 */
-	public double calculateDistanceBtwTwoPoints(DatasetPoint p1, DatasetPoint p2){
-		double xDiff = p1.getX() - p2.getX();
-		double yDiff = p1.getY() - p2.getY();
-		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-	}
 	
 	/**
 	 * Run DBSCAN algorithm
-	 * @param dataset datasets of points
 	 * @param eps eps value
 	 * @param minPts min pts value
 	 */
@@ -60,7 +32,7 @@ public class DBSCAN {
 			if(regionQuery.size() < minPts){
 				point.setNoise(true);
 			}else{
-				exandCluster(point, regionQuery, clusterLabel, eps, minPts);
+				expandCluster(point, regionQuery, clusterLabel, eps, minPts);
 				clusterLabel++;
 			}
 		}
@@ -94,7 +66,7 @@ public class DBSCAN {
 	 * @param eps eps value
 	 * @param minPts min pts value
 	 */
-	private void exandCluster(DatasetPoint point, ArrayList<DatasetPoint> regionQuery, int clusterLabel, double eps, int minPts ){
+	private void expandCluster(DatasetPoint point, ArrayList<DatasetPoint> regionQuery, int clusterLabel, double eps, int minPts ){
 		point.setAssignedCluster(String.valueOf(clusterLabel));
 		for (int i = 0; i < regionQuery.size(); i++) {
 			DatasetPoint neighborPoint = regionQuery.get(i);
@@ -103,6 +75,7 @@ public class DBSCAN {
 				ArrayList<DatasetPoint> regionQueryOfNeighborPoint = getRegionQuery(neighborPoint, eps);
 				if(regionQueryOfNeighborPoint.size() >= minPts){
 					// add regionQueryOfNeighborPoint to regionQuery
+					regionQuery.addAll(regionQueryOfNeighborPoint);
 				}
 			}
 			if (neighborPoint.getAssignedCluster().equalsIgnoreCase("")){
@@ -110,6 +83,58 @@ public class DBSCAN {
 			}
 		}
 	}
+
+	/**
+	 * calculate the distance matrix between all the points
+	 * @param dataset dataset
+	 */
+	public void calculateDistanceMatrix(ArrayList<DatasetPoint> dataset){
+		for (int i = 0; i < dataset.size(); i++) {
+			DatasetPoint currentPoint = dataset.get(i);
+			ArrayList<Double> distanceRecord = new ArrayList<Double>();
+			for (int j = 0; j < dataset.size(); j++) {
+				distanceRecord.add(calculateDistanceBtwTwoPoints(currentPoint, dataset.get(j)));
+			}
+			this.distanceMatrix.put(currentPoint, distanceRecord);
+		}
+	}
 	
+	/**
+	 * calculate the Euclidean Distance between two points
+	 * @param p1 point 1
+	 * @param p2 point 2
+	 * @return Distance
+	 */
+	public double calculateDistanceBtwTwoPoints(DatasetPoint p1, DatasetPoint p2){
+		double xDiff = p1.getX() - p2.getX();
+		double yDiff = p1.getY() - p2.getY();
+		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+	}
+	
+	public static void main(String[] args) {
+		ArrayList<Integer> list1 =  new ArrayList<Integer>();
+		ArrayList<Integer> list2 =  new ArrayList<Integer>();
+		list1.add(1);
+		list1.add(2);
+		list1.add(3);
+		list1.add(4);
+		list1.add(5);
+		
+		list1.add(6);
+		list1.add(7);
+		list1.add(8);
+		list1.add(9);
+		list1.add(10);
+		
+		boolean add = false;
+		for (int i = 0; i < list1.size(); i++) {
+			if(i >2 && !add){
+				list1.addAll(list2);
+			}
+			System.out.println(list1.get(i));
+		}
+
+	}
+
 	
 }
