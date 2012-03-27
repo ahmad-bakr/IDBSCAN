@@ -10,9 +10,12 @@ public class DBSCAN {
 
 	
 	private Hashtable<DatasetPoint, ArrayList<Double>> distanceMatrix;
+	private ArrayList<DatasetPoint> dataset;
 	
-	public DBSCAN() {
+	public DBSCAN(ArrayList<DatasetPoint> dataset) {
 		this.distanceMatrix = new Hashtable<DatasetPoint, ArrayList<Double>>();
+		this.dataset = dataset;
+		calculateDistanceMatrix(dataset);
 	}
 	
 	/**
@@ -48,8 +51,7 @@ public class DBSCAN {
 	 * @param eps eps value
 	 * @param minPts min pts value
 	 */
-	public void run(ArrayList<DatasetPoint> dataset, double eps, int minPts){
-		calculateDistanceMatrix(dataset);
+	public void run( double eps, int minPts){
 		int clusterLabel = 0;
 		for (int i = 0; i < dataset.size(); i++) {
 			DatasetPoint point = dataset.get(i);
@@ -72,6 +74,15 @@ public class DBSCAN {
 	 */
 	private ArrayList<DatasetPoint> getRegionQuery(DatasetPoint point, double eps){
 		ArrayList<DatasetPoint> list = new ArrayList<DatasetPoint>();
+		ArrayList<Double> distanceRecord = this.distanceMatrix.get(point);
+		for (int i = 0; i < distanceRecord.size(); i++) {
+			if(distanceRecord.get(i) <= eps){
+				DatasetPoint p = this.dataset.get(i);
+				if(p != point){
+					list.add(p);
+				}
+			}
+		}
 		return list;
 	}
 	
