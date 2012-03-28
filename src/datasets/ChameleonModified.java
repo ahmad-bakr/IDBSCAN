@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.xml.crypto.Data;
+
 public class ChameleonModified implements DatasetsIF{
 	
 	/**
@@ -39,7 +41,26 @@ public class ChameleonModified implements DatasetsIF{
 	  in.close();
 		return clustersHash;
 	}
-	
+
+
+	@Override
+	public ArrayList<DatasetPoint> loadArrayList(String path) throws IOException {
+		ArrayList<DatasetPoint> list = new ArrayList<DatasetPoint>();
+		FileInputStream fstream = new FileInputStream(path);
+		DataInputStream in = new DataInputStream(fstream);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		String strLine;
+	  while ((strLine = br.readLine()) != null)   {
+	  	String [] tokens = strLine.split("\t");
+	  	String clusterID = tokens[0];
+	  	DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
+	  	list.add(p);
+	  }
+	  in.close();
+
+		return list;
+	}
+
 	public static void main(String[] args) throws IOException {
 		ChameleonModified dataset = new ChameleonModified();
 		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
@@ -48,11 +69,5 @@ public class ChameleonModified implements DatasetsIF{
 			String clusterID = (String) keys.nextElement();
 			System.out.println("Cluster "+ clusterID + " has "+ clustersHash.get(clusterID).size() +" points");
 		}
-	}
-
-	@Override
-	public ArrayList<DatasetPoint> loadArrayList(String path) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

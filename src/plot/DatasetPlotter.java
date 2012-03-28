@@ -14,6 +14,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
+import datasets.ChameleonData;
 import datasets.ChameleonModified;
 import datasets.DatasetPoint;
 import datasets.DatasetsIF;
@@ -66,10 +67,13 @@ public class DatasetPlotter extends ApplicationFrame{
 	}
 	
 	public static void main(String[] args) throws IOException {
-		DatasetsIF dataset = new ChameleonModified();
-		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
+	//	DatasetsIF dataset = new ChameleonModified();
+	//	Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
+		ChameleonData datasetLoader = new ChameleonData();
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");
+
 		DatasetPlotter plotter = new DatasetPlotter("Clusters");
-		plotter.plot(clustersHash);
+		plotter.plotList(dataset);
 		plotter.pack();
 		RefineryUtilities.centerFrameOnScreen(plotter);
 		plotter.setVisible(true); 
