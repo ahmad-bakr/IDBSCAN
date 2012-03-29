@@ -126,7 +126,7 @@ public class DBSCAN {
 	
 	public static void main(String[] args) throws IOException {
 		double eps = 10;
-		int minPts= 5;
+		int minPts= 15;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");
 		DBSCAN dbscan = new DBSCAN(dataset);
