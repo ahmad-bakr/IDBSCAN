@@ -15,14 +15,17 @@ import datasets.DatasetsIF;
 
 public class DBSCAN {
 	
-	private Hashtable<DatasetPoint, ArrayList<Double>> distanceMatrix;
 	private ArrayList<DatasetPoint> dataset;
+	private ArrayList<Double[]> triangularDistanceMatrix;
+	private Hashtable<DatasetPoint, Integer> pointsIndex;
 	
 	public DBSCAN(ArrayList<DatasetPoint> dataset) {
-		this.distanceMatrix = new Hashtable<DatasetPoint, ArrayList<Double>>();
+		this.pointsIndex = new Hashtable<DatasetPoint, Integer>();
 		this.dataset = dataset;
-	//	System.out.println("Calculating the Distance Matrix, Number of points = " + dataset.size());
-		calculateDistanceMatrix(dataset);
+		System.out.println("Calculating the Distance Matrix, Number of points = " + dataset.size());
+		this.triangularDistanceMatrix = new ArrayList<Double[]>(this.dataset.size());		
+		calculateTriangularDistanceMatrxi();
+		
 	}
 	
 	
@@ -34,11 +37,11 @@ public class DBSCAN {
 	public void run( double eps, int minPts){
 		int clusterLabel = 0;
 		for (int i = 0; i < dataset.size(); i++) {
-		//	System.out.println(i);
+			System.out.println(i);
 			DatasetPoint point = dataset.get(i);
 			if (point.getIsVisited()) continue;
 			point.setVisited(true);
-			ArrayList<DatasetPoint> regionQuery = getRegionQuery(point, eps);
+			ArrayList<DatasetPoint> regionQuery = getRegionQueryUsingTriangularMatrix(point,i, eps);
 			if(regionQuery.size() < minPts){
 				point.setNoise(true);
 			}else{
@@ -48,26 +51,28 @@ public class DBSCAN {
 		}
 	}
 	
-	/**
-	 * Get the region query of a specific point
-	 * @param point point 
-	 * @param eps eps
-	 * @return region query of points
-	 */
-	private ArrayList<DatasetPoint> getRegionQuery(DatasetPoint point, double eps){
+
+
+	private ArrayList<DatasetPoint> getRegionQueryUsingTriangularMatrix(DatasetPoint point, int pointIndex ,double eps){
 		ArrayList<DatasetPoint> list = new ArrayList<DatasetPoint>();
-		ArrayList<Double> distanceRecord = this.distanceMatrix.get(point);
-		for (int i = 0; i < distanceRecord.size(); i++) {
-			if(distanceRecord.get(i) <= eps){
+		Double [] rowRecord = this.triangularDistanceMatrix.get(pointIndex);
+		for (int i = 0; i < pointIndex; i++) {
+			if(rowRecord[i] <= eps){
 				DatasetPoint p = this.dataset.get(i);
-				if(p != point){
-					list.add(p);
-				}
+				list.add(p);
 			}
 		}
+		
+		for (int i = pointIndex+1; i < this.dataset.size(); i++) {
+			if(this.triangularDistanceMatrix.get(i)[pointIndex] <= eps){
+				DatasetPoint p = this.dataset.get(i);
+				list.add(p);
+			}
+		}
+		
 		return list;
 	}
-	
+
 	/**
 	 * Expand cluster
 	 * @param point current point
@@ -82,7 +87,7 @@ public class DBSCAN {
 			DatasetPoint neighborPoint = regionQuery.get(i);
 			if (!neighborPoint.getIsVisited()){
 				neighborPoint.setVisited(true);
-				ArrayList<DatasetPoint> regionQueryOfNeighborPoint = getRegionQuery(neighborPoint, eps);
+				ArrayList<DatasetPoint> regionQueryOfNeighborPoint = getRegionQueryUsingTriangularMatrix(neighborPoint,this.pointsIndex.get(neighborPoint), eps);
 				if(regionQueryOfNeighborPoint.size() >= minPts){
 					// add regionQueryOfNeighborPoint to regionQuery
 					regionQuery.addAll(regionQueryOfNeighborPoint);
@@ -94,19 +99,16 @@ public class DBSCAN {
 		}
 	}
 
-	/**
-	 * calculate the distance matrix between all the points
-	 * @param dataset dataset
-	 */
-	public void calculateDistanceMatrix(ArrayList<DatasetPoint> dataset){
-		for (int i = 0; i < dataset.size(); i++) {
-	//		System.out.println(i);
+	public void calculateTriangularDistanceMatrxi(){
+		for (int i = 0; i < this.dataset.size(); i++) {
+			System.out.println(i);
 			DatasetPoint currentPoint = dataset.get(i);
-			ArrayList<Double> distanceRecord = new ArrayList<Double>();
-			for (int j = 0; j < dataset.size(); j++) {
-				distanceRecord.add(calculateDistanceBtwTwoPoints(currentPoint, dataset.get(j)));
+			this.pointsIndex.put(currentPoint, i);
+			Double [] distanceRecord = new Double [i];
+			for (int j = 0; j < i; j++) {
+				distanceRecord[j] = calculateDistanceBtwTwoPoints(currentPoint, dataset.get(j));
 			}
-			this.distanceMatrix.put(currentPoint, distanceRecord);
+			this.triangularDistanceMatrix.add(distanceRecord);
 		}
 	}
 	
@@ -124,12 +126,12 @@ public class DBSCAN {
 	
 	public static void main(String[] args) throws IOException {
 		double eps = 10;
-		int minPts= 4;
+		int minPts= 5;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");
 		DBSCAN dbscan = new DBSCAN(dataset);
 		dbscan.run(eps, minPts);
-
+		System.gc();
 		DatasetPlotter plotter = new DatasetPlotter("Clusters");
 		plotter.plotList(dataset);
 		plotter.pack();
