@@ -26,10 +26,12 @@ public class ChameleonModified implements DatasetsIF{
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine;
+		int id =0;
 	  while ((strLine = br.readLine()) != null)   {
 	  	String [] tokens = strLine.split("\t");
 	  	String clusterID = tokens[0];
-	  	DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
+	  	DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]), id);
+	  	id++;
 	  	if (clustersHash.containsKey(clusterID)){
 	  		 clustersHash.get(clusterID).add(p);
 	  	}else{
@@ -50,10 +52,12 @@ public class ChameleonModified implements DatasetsIF{
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine;
+		int id=0;
 	  while ((strLine = br.readLine()) != null)   {
 	  	String [] tokens = strLine.split("\t");
 	  	String clusterID = tokens[0];
-	  	DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
+	  	DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]),id);
+	  	id++;
 	  	list.add(p);
 	  }
 	  in.close();

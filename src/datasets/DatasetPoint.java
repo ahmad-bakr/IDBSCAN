@@ -7,14 +7,16 @@ public class DatasetPoint {
 	private String assignedCluster;
 	private boolean isVisited;
 	private boolean isNoise;
+	private int ID;
 	
-	public DatasetPoint(String cluster, double x, double y) {
+	public DatasetPoint(String cluster, double x, double y, int id) {
 		this.x = x;
 		this.y = y;
 		this.originalCluster = cluster;
 		this.isVisited = false;
 		this.isNoise = false;
 		this.assignedCluster="";
+		this.ID = id;
 	}
 	
 	public void setVisited(boolean isVisited) {
@@ -65,6 +67,12 @@ public class DatasetPoint {
 		return this.isVisited;
 	}
 	
-
+	public int getID() {
+		return ID;
+	}
+	
+	public void setID(int iD) {
+		ID = iD;
+	}
 
 }

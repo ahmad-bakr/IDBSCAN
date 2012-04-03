@@ -16,6 +16,9 @@ import plot.DatasetPlotter;
 
 public class ChameleonData implements DatasetsIF{
 
+	/**
+	 * Load dataset as hashtable
+	 */
 	@Override
 	public Hashtable<String, ArrayList<DatasetPoint>> load(String path) throws IOException {
 		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = new Hashtable<String, ArrayList<DatasetPoint>>();
@@ -25,10 +28,12 @@ public class ChameleonData implements DatasetsIF{
 	  DataInputStream in = new DataInputStream(fstream);
 	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	  String strLine;
+	  int id =0;
 	  while ((strLine = br.readLine()) != null)   {
 	   String [] tokens = strLine.split(" ");
 	   String clusterID = fileName;
-	   DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]));
+	   DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), id);
+	   id++;
 	   clustersHash.get(clusterID).add(p);
     }
 		return clustersHash;
@@ -44,10 +49,12 @@ public class ChameleonData implements DatasetsIF{
 	  DataInputStream in = new DataInputStream(fstream);
 	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	  String strLine;
+	  int id=0;
 	  while ((strLine = br.readLine()) != null)   {
 	   String [] tokens = strLine.split(" ");
 	   String clusterID = "1";
-	   DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]));
+	   DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), id);
+	   id++;
 	   dataset.add(p);
 	  }
 		return dataset;
