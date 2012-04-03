@@ -27,8 +27,8 @@ public class Clarans {
 			current = graph.getNode();
 			while (j <= maxNeighbors){		
 				randomNeighbor = graph.getNeighbor(current);
-				current.calculateCost();
-				randomNeighbor.calculateCost();		
+				current.calculateCost(dataset);
+				randomNeighbor.calculateCost(dataset);		
 				j++;
 				if(randomNeighbor.getCost() < current.getCost()){
 					 j=1;

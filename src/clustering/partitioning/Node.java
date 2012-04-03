@@ -1,9 +1,15 @@
 package clustering.partitioning;
 
+import java.util.ArrayList;
+
+import datasets.DatasetPoint;
+
 public class Node {
 	
 	private Medoid [] medoids;
 	private double cost;
+	private boolean costCalculated;
+	private ArrayList<ArrayList<Integer>> medoidsAssignedPoints ;
 	
 	/**
 	 * Constructor
@@ -12,7 +18,53 @@ public class Node {
 	public Node(int numberOfMedoids) {
 		this.medoids = new Medoid [numberOfMedoids];
 		this.cost = 0;
+		this.costCalculated = false;
+		this.medoidsAssignedPoints = new ArrayList<ArrayList<Integer>>(numberOfMedoids);
+		for (int i = 0; i < numberOfMedoids; i++) {
+			this.medoidsAssignedPoints.add(new ArrayList<Integer>());
+		}
 	}
+	
+	
+	/**
+	 * calculate the cost if the node solution
+	 * @param dataset dataset
+	 */
+	public void calculateCost(ArrayList<DatasetPoint> dataset){
+		if (!this.costCalculated){
+			double cost = 0;		
+			for (int i = 0; i < dataset.size(); i++) {
+				DatasetPoint p = dataset.get(i);
+				double minDistance = Double.MAX_VALUE;
+				int selectedMedoid = 0;
+				for (int j = 0; j < this.medoids.length; j++) {
+					double distance = calculateDistanceToMedoid(this.medoids[j], p);
+					if(distance < minDistance){
+						minDistance = distance;
+						selectedMedoid = j;
+					}
+				}// end calculating distances from point p to all medoids 
+				this.medoidsAssignedPoints.get(selectedMedoid).add(i);
+				cost += minDistance;
+			}// end looping for all points
+			this.setCost(cost);
+			this.costCalculated = true;		
+		}
+	}
+	
+	/**
+	 * calculate distance to medoid
+	 * @param m medoid m
+	 * @param p dataset point p
+	 * @return distance between m and p
+	 */
+	public double calculateDistanceToMedoid(Medoid m, DatasetPoint p){
+		double xDiff = m.getX() - p.getX();
+		double yDiff = m.getY() - p.getY();
+		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+	}
+
+
 	
 	/**
 	 * Add medoid to the node
@@ -77,11 +129,5 @@ public class Node {
 		return cost;
 	}
 	
-	/**
-	 * calculate the cost of the node
-	 */
-	public void calculateCost(){
-		
-	}
 
 }
