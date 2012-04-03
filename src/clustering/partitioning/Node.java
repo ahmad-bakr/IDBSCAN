@@ -3,6 +3,7 @@ package clustering.partitioning;
 public class Node {
 	
 	private Medoid [] medoids;
+	private double cost;
 	
 	/**
 	 * Constructor
@@ -10,6 +11,7 @@ public class Node {
 	 */
 	public Node(int numberOfMedoids) {
 		this.medoids = new Medoid [numberOfMedoids];
+		this.cost = 0;
 	}
 	
 	/**
@@ -57,6 +59,29 @@ public class Node {
 	 */
 	public Medoid[] getMedoids() {
 		return medoids;
+	}
+
+	/**
+	 * Set the cost of the node
+	 * @param cost cost of the node
+	 */
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+	
+	/**
+	 * get the cost of the node
+	 * @return cost of the node
+	 */
+	public double getCost() {
+		return cost;
+	}
+	
+	/**
+	 * calculate the cost of the node
+	 */
+	public void calculateCost(){
+		
 	}
 
 }
