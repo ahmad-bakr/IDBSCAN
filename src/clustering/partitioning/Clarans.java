@@ -18,11 +18,12 @@ public class Clarans {
 		int i=0;
 		double minCost = Double.MAX_VALUE;
 		Node bestNode =null;
+		NodeFactory graph = new NodeFactory(dataset, numPartitions);
+		int j=1;
 		while (i <= numLocals){
 			Node current = null;
 			Node randomNeighbor = null;
-			NodeFactory graph = new NodeFactory(dataset, numPartitions);
-			int j=1;	
+		  j=1;	
 			current = graph.getNode();
 			while (j <= maxNeighbors){		
 				randomNeighbor = graph.getNeighbor(current);
@@ -34,7 +35,6 @@ public class Clarans {
 					 current = randomNeighbor;
 				}
 			}
-			
 			if(current.getCost() < minCost){
 				minCost = current.getCost();
 				bestNode = current;
