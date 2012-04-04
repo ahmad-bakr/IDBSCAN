@@ -53,7 +53,7 @@ public class NodeFactory {
 			neighbor.addMedoid(i, m.getX(), m.getY());
 		}
 		//find a new medoid to replace the current one
-		int replacedMedoidIndex = 0 + (int)(Math.random() * ((this.numberOfMedoids - 0) + 1));
+		int replacedMedoidIndex = 0 + (int)(Math.random() * (((this.numberOfMedoids-1) - 0) + 1));
 		double newMedoidXValue = 0;
 		double newMedoidYValue = 0;
 		do {

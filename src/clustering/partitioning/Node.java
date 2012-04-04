@@ -129,5 +129,9 @@ public class Node {
 		return cost;
 	}
 	
+	public ArrayList<ArrayList<Integer>> getMedoidsAssignedPoints() {
+		return medoidsAssignedPoints;
+	}
+	
 
 }

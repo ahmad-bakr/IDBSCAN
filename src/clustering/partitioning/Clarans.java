@@ -1,7 +1,13 @@
 package clustering.partitioning;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import org.jfree.ui.RefineryUtilities;
+
+import plot.PlotClarans;
+
+import datasets.ChameleonModified;
 import datasets.DatasetPoint;
 
 public class Clarans {
@@ -45,6 +51,22 @@ public class Clarans {
 		
 		
 		return bestNode;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		int numLocals = 4;
+		int maxNeighbors = 5;
+		int numPartitions =4;
+		ChameleonModified datasetLoader = new ChameleonModified();
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/gaussian2clusters.txt");
+		Clarans clarans = new Clarans();
+		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
+		PlotClarans plotter = new PlotClarans("Partitions");
+		plotter.plotNode(dataset, bestRanSolution);
+		plotter.pack();
+		RefineryUtilities.centerFrameOnScreen(plotter);
+		plotter.setVisible(true); 
+
 	}
 	
 

@@ -12,6 +12,10 @@ import java.util.Hashtable;
 
 import javax.xml.crypto.Data;
 
+import org.jfree.ui.RefineryUtilities;
+
+import plot.DatasetPlotter;
+
 public class ChameleonModified implements DatasetsIF{
 	
 	/**
@@ -66,12 +70,15 @@ public class ChameleonModified implements DatasetsIF{
 	}
 
 	public static void main(String[] args) throws IOException {
-		ChameleonModified dataset = new ChameleonModified();
-		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
-		Enumeration keys = clustersHash.keys();
-		while (keys.hasMoreElements()) {
-			String clusterID = (String) keys.nextElement();
-			System.out.println("Cluster "+ clusterID + " has "+ clustersHash.get(clusterID).size() +" points");
-		}
+		ChameleonModified datasetLoader = new ChameleonModified();
+	//	Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/gaussian2clusters.txt");
+
+		DatasetPlotter plotter = new DatasetPlotter("Clusters");
+		plotter.plotList(dataset);
+		plotter.pack();
+		RefineryUtilities.centerFrameOnScreen(plotter);
+		plotter.setVisible(true); 
+
 	}
 }
