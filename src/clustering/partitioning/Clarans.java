@@ -56,9 +56,9 @@ public class Clarans {
 	public static void main(String[] args) throws IOException {
 		int numLocals = 4;
 		int maxNeighbors = 5;
-		int numPartitions =4;
+		int numPartitions =8;
 		ChameleonModified datasetLoader = new ChameleonModified();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/gaussian2clusters.txt");
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
 		Clarans clarans = new Clarans();
 		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
 		PlotClarans plotter = new PlotClarans("Partitions");
