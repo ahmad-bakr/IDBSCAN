@@ -8,6 +8,7 @@ public class DatasetPoint {
 	private boolean isVisited;
 	private boolean isNoise;
 	private int ID;
+	private int indexInPartition;
 	
 	public DatasetPoint(String cluster, double x, double y, int id) {
 		this.x = x;
@@ -73,6 +74,14 @@ public class DatasetPoint {
 	
 	public void setID(int iD) {
 		ID = iD;
+	}
+	
+	public void setIndexInPartition(int indexInPartition) {
+		this.indexInPartition = indexInPartition;
+	}
+	
+	public int getIndexInPartition() {
+		return indexInPartition;
 	}
 
 }

@@ -16,7 +16,11 @@ public class DBSCANPartitioner {
 		this.dataset = dataset;
 		this.pointsID = pointsIDS;
 		this.medoidID = medoidID;
-		this.triangularDistanceMatrix = new ArrayList<Double[]>(this.pointsID.size());		
+		this.triangularDistanceMatrix = new ArrayList<Double[]>(this.pointsID.size());
+		for (int i = 0; i < this.pointsID.size(); i++) {
+			this.dataset.get(this.pointsID.get(i)).setIndexInPartition(i);
+		}
+		calculateTriangularDistanceMatrxi();
 	}	
 	
 
@@ -32,15 +36,72 @@ public class DBSCANPartitioner {
 			DatasetPoint point = dataset.get(this.pointsID.get(i));
 			if (point.getIsVisited()) continue;
 			point.setVisited(true);
-		//	ArrayList<DatasetPoint> regionQuery = getRegionQueryUsingTriangularMatrix(point,this.pointsID.get(i), eps);
-			//if(regionQuery.size() < minPts){
-		//		point.setNoise(true);
-	//		}else{
-			//	expandCluster(point, regionQuery, clusterLabel, eps, minPts);
-		//		clusterLabel++;
-		//	}
+			ArrayList<DatasetPoint> regionQuery = getRegionQueryUsingTriangularMatrix(point, eps);
+			if(regionQuery.size() < minPts){
+				point.setNoise(true);
+			}else{
+				expandCluster(point, regionQuery, clusterLabel, eps, minPts);
+				clusterLabel++;
+			}
 		}
 	}
+	
+
+	/**
+	 * Expand cluster
+	 * @param point current point
+	 * @param regionQuery region query of the point
+	 * @param clusterLabel cluster label
+	 * @param eps eps value
+	 * @param minPts min pts value
+	 */
+	private void expandCluster(DatasetPoint point, ArrayList<DatasetPoint> regionQuery, int clusterLabel, double eps, int minPts ){
+		point.setAssignedCluster(String.valueOf(clusterLabel));
+		for (int i = 0; i < regionQuery.size(); i++) {
+			DatasetPoint neighborPoint = regionQuery.get(i);
+			if (!neighborPoint.getIsVisited()){
+				neighborPoint.setVisited(true);
+				ArrayList<DatasetPoint> regionQueryOfNeighborPoint = getRegionQueryUsingTriangularMatrix(neighborPoint, eps);
+				if(regionQueryOfNeighborPoint.size() >= minPts){
+					// add regionQueryOfNeighborPoint to regionQuery
+					regionQuery.addAll(regionQueryOfNeighborPoint);
+				}
+			}
+			if (neighborPoint.getAssignedCluster().equalsIgnoreCase("")){
+				neighborPoint.setAssignedCluster(String.valueOf(clusterLabel));
+			}
+		}
+	}
+
+
+	/**
+	 * Get the region query of a point
+	 * @param point point 
+	 * @param pointIndex point index at pointsIDs
+	 * @param eps eps value
+	 * @return list of points in the region
+	 */
+	private ArrayList<DatasetPoint> getRegionQueryUsingTriangularMatrix(DatasetPoint point ,double eps){
+		int pointIndex = point.getIndexInPartition();
+		ArrayList<DatasetPoint> list = new ArrayList<DatasetPoint>();
+		Double [] rowRecord = this.triangularDistanceMatrix.get(pointIndex);
+		for (int i = 0; i < pointIndex; i++) {
+			if(rowRecord[i] <= eps){
+				DatasetPoint p = this.dataset.get(this.pointsID.get(i));
+				list.add(p);
+			}
+		}
+		
+		for (int i = pointIndex+1; i < this.pointsID.size(); i++) {
+			if(this.triangularDistanceMatrix.get(i)[pointIndex] <= eps){
+				DatasetPoint p = this.dataset.get(this.pointsID.get(i));
+				list.add(p);
+			}
+		}
+		
+		return list;
+	}
+
 		
 	/**
 	 * calculate the distance matrix for the partition
