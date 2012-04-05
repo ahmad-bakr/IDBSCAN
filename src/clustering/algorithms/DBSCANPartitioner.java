@@ -1,9 +1,13 @@
 package clustering.algorithms;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import clustering.partitioning.Clarans;
 import clustering.partitioning.Medoid;
+import clustering.partitioning.Node;
 
+import datasets.ChameleonModified;
 import datasets.DatasetPoint;
 
 public class DBSCANPartitioner {
@@ -130,5 +134,18 @@ public class DBSCANPartitioner {
 		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 	}
 
+	public static void main(String[] args) throws IOException {
+		int numLocals = 4;
+		int maxNeighbors = 5;
+		int numPartitions =8;
+		int minPts = 10;
+		double eps = 15;
+		ChameleonModified datasetLoader = new ChameleonModified();
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
+		Clarans clarans = new Clarans();
+		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
+		DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, 0, bestRanSolution.getMedoidsAssignedPoints().get(0));
+		dbscanpart.run(eps, minPts);
+	}
 
 }
