@@ -62,7 +62,7 @@ public class DBSCANPartitioner {
 		while (keys.hasMoreElements()) {
 			String denseRegionLabel = (String) keys.nextElement();
 			DenseRegion d = this.denseRegions.get(denseRegionLabel);
-			
+			this.medoid.addRegion(d);
 		}
 	}
 	
@@ -176,12 +176,26 @@ public class DBSCANPartitioner {
 			DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, bestRanSolution.getMedoids()[i], bestRanSolution.getMedoidsAssignedPoints().get(i));
 			dbscanpart.run(eps, minPts);			
 		}
+
 		
-		PlotDBSCANPartitioner plotter = new PlotDBSCANPartitioner("regions");
-		plotter.plot(dataset, bestRanSolution);
-		plotter.pack();
-		RefineryUtilities.centerFrameOnScreen(plotter);
-		plotter.setVisible(true); 
+		Medoid m = bestRanSolution.getMedoids()[0];
+		System.out.println("************************************");
+		System.out.println("Size= "+m.getRegions().size());
+		
+		for (int i = 0; i < m.getRegions().size(); i++) {
+			System.out.println(m.getRegions().get(i).getPoints().size());
+			System.out.println(m.getRegions().get(i).getBoarderPoints().size());
+			System.out.println("-----------------");
+		}
+		
+		
+		System.out.println("************************************");
+		
+//		PlotDBSCANPartitioner plotter = new PlotDBSCANPartitioner("regions");
+//		plotter.plot(dataset, bestRanSolution);
+//		plotter.pack();
+//		RefineryUtilities.centerFrameOnScreen(plotter);
+//		plotter.setVisible(true); 
 
 	}
 
