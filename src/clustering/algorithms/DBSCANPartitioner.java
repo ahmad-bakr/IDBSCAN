@@ -2,6 +2,8 @@ package clustering.algorithms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.jfree.ui.RefineryUtilities;
 
@@ -18,13 +20,15 @@ import datasets.DatasetPoint;
 public class DBSCANPartitioner {
 	private ArrayList<DatasetPoint> dataset;
 	private ArrayList<Double[]> triangularDistanceMatrix;
-	private int medoidID;
+	private Medoid medoid;
 	private ArrayList<Integer> pointsID;
+	private Hashtable<String, DenseRegion> denseRegions;
 	
-	public DBSCANPartitioner(ArrayList<DatasetPoint> dataset, int medoidID ,ArrayList<Integer> pointsIDS) {
+	public DBSCANPartitioner(ArrayList<DatasetPoint> dataset, Medoid medoid ,ArrayList<Integer> pointsIDS) {
 		this.dataset = dataset;
 		this.pointsID = pointsIDS;
-		this.medoidID = medoidID;
+		this.medoid = medoid;
+		this.denseRegions= new Hashtable<String, DenseRegion>();
 		this.triangularDistanceMatrix = new ArrayList<Double[]>(this.pointsID.size());
 		for (int i = 0; i < this.pointsID.size(); i++) {
 			this.dataset.get(this.pointsID.get(i)).setIndexInPartition(i);
@@ -53,6 +57,13 @@ public class DBSCANPartitioner {
 				clusterLabel++;
 			}
 		}
+		
+		Enumeration keys = this.denseRegions.keys();
+		while (keys.hasMoreElements()) {
+			String denseRegionLabel = (String) keys.nextElement();
+			DenseRegion d = this.denseRegions.get(denseRegionLabel);
+			
+		}
 	}
 	
 
@@ -65,7 +76,16 @@ public class DBSCANPartitioner {
 	 * @param minPts min pts value
 	 */
 	private void expandCluster(DatasetPoint point, ArrayList<DatasetPoint> regionQuery, int clusterLabel, double eps, int minPts ){
-		point.setAssignedCluster(String.valueOf(this.medoidID)+"_"+String.valueOf(clusterLabel));
+		String denseRegionLabel = String.valueOf(this.medoid.getId())+"_"+String.valueOf(clusterLabel);
+		if(this.denseRegions.containsKey(denseRegionLabel)){
+		  this.denseRegions.get(denseRegionLabel).addPoint(point.getID());
+		}else{
+			DenseRegion d = new DenseRegion();
+			d.addPoint(point.getID());
+			this.denseRegions.put(denseRegionLabel, d);
+		}
+		point.setAssignedCluster(denseRegionLabel);
+
 		for (int i = 0; i < regionQuery.size(); i++) {
 			DatasetPoint neighborPoint = regionQuery.get(i);
 			if (!neighborPoint.getIsVisited()){
@@ -75,10 +95,12 @@ public class DBSCANPartitioner {
 					regionQuery.addAll(regionQueryOfNeighborPoint);
 				}else{
 					neighborPoint.setBoarder(true);
+					this.denseRegions.get(denseRegionLabel).addBoarderPoint(neighborPoint.getID());
 				}
 			}
 			if (neighborPoint.getAssignedCluster().equalsIgnoreCase("")){
-				neighborPoint.setAssignedCluster(String.valueOf(this.medoidID)+"_"+String.valueOf(clusterLabel));
+				neighborPoint.setAssignedCluster(denseRegionLabel);
+				this.denseRegions.get(denseRegionLabel).addPoint(neighborPoint.getID());
 			}
 		}
 	}
@@ -151,7 +173,7 @@ public class DBSCANPartitioner {
 		Clarans clarans = new Clarans();
 		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
 		for (int i = 0; i < bestRanSolution.getMedoids().length; i++) {
-			DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, i, bestRanSolution.getMedoidsAssignedPoints().get(i));
+			DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, bestRanSolution.getMedoids()[i], bestRanSolution.getMedoidsAssignedPoints().get(i));
 			dbscanpart.run(eps, minPts);			
 		}
 		

@@ -1,18 +1,37 @@
 package clustering.partitioning;
 
+import java.util.ArrayList;
+
+import clustering.algorithms.DenseRegion;
+
 public class Medoid {
 	
 	private double x;
 	private double y;
+	int id;
+	private ArrayList<DenseRegion> regions;
 	
 	/**
 	 * Medoid Constructor
 	 * @param x medoid X
 	 * @param y mdeoid Y
 	 */
-	public Medoid(double x, double y) {
+	public Medoid(int id,double x, double y) {
 		this.x = x;
 		this.y =y;
+		this.id = id;
+		this.regions = new ArrayList<DenseRegion>();
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void addRegion(DenseRegion r){
+		this.regions.add(r);
+	}
+	
+	public ArrayList<DenseRegion> getRegions() {
+		return regions;
 	}
 	
 	/**

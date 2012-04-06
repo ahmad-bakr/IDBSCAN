@@ -73,7 +73,7 @@ public class Node {
 	 * @param y medoid's y
 	 */
 	public void addMedoid(int index, double x, double y){
-		Medoid m = new Medoid(x, y);
+		Medoid m = new Medoid(index,x, y);
 		this.medoids[index] = m;
 	}
 	

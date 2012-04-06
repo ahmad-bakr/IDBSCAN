@@ -33,7 +33,7 @@ public class PlotDBSCANPartitioner extends ApplicationFrame{
 				ArrayList<Integer> assignedPointsToM = solution.getMedoidsAssignedPoints().get(i);
 				for (int j = 0; j < assignedPointsToM.size(); j++) {
 					DatasetPoint p = dataset.get(assignedPointsToM.get(j));
-					if (!p.getIsBoarder()) continue; 
+					//if (!p.getIsBoarder()) continue; 
 					if(seensRegons.containsKey(p.getAssignedCluster())){
 						seensRegons.get(p.getAssignedCluster()).add(p.getX(), p.getY());
 					}else{

@@ -19,13 +19,13 @@ public class EnhancedDBSCAN {
 		Clarans clarans = new Clarans();
 		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
 		for (int i = 0; i < bestRanSolution.getMedoids().length; i++) {
-			DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, i, bestRanSolution.getMedoidsAssignedPoints().get(i));
+			DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, bestRanSolution.getMedoids()[i], bestRanSolution.getMedoidsAssignedPoints().get(i));
 			dbscanpart.run(eps, minPts);			
 		}
-		mergeRegions(alpha);
+		mergeRegions(bestRanSolution,alpha);
 	}
 	
-	public void mergeRegions(double alpha){
+	public void mergeRegions(Node clusteringSolution,double alpha){
 		
 	}
 	
