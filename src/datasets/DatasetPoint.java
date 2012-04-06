@@ -26,7 +26,7 @@ public class DatasetPoint {
 		this.isBoarder = isBoarder;
 	}
 	
-	public boolean getIsBoarder(boolean isBoarder){
+	public boolean getIsBoarder(){
 		return this.isBoarder;
 	}
 	

@@ -141,8 +141,8 @@ public class DBSCANPartitioner {
 	}
 
 	public static void main(String[] args) throws IOException {
-		int numLocals = 10;
-		int maxNeighbors = 10;
+		int numLocals = 9;
+		int maxNeighbors = 7;
 		int numPartitions =9;
 		double eps = 10;
 		int minPts= 15;
