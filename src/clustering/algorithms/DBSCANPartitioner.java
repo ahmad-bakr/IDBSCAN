@@ -3,10 +3,15 @@ package clustering.algorithms;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.jfree.ui.RefineryUtilities;
+
+import plot.PlotDBSCANPartitioner;
+
 import clustering.partitioning.Clarans;
 import clustering.partitioning.Medoid;
 import clustering.partitioning.Node;
 
+import datasets.ChameleonData;
 import datasets.ChameleonModified;
 import datasets.DatasetPoint;
 
@@ -60,7 +65,7 @@ public class DBSCANPartitioner {
 	 * @param minPts min pts value
 	 */
 	private void expandCluster(DatasetPoint point, ArrayList<DatasetPoint> regionQuery, int clusterLabel, double eps, int minPts ){
-		point.setAssignedCluster(String.valueOf(clusterLabel));
+		point.setAssignedCluster(String.valueOf(this.medoidID)+"_"+String.valueOf(clusterLabel));
 		for (int i = 0; i < regionQuery.size(); i++) {
 			DatasetPoint neighborPoint = regionQuery.get(i);
 			if (!neighborPoint.getIsVisited()){
@@ -73,7 +78,7 @@ public class DBSCANPartitioner {
 				}
 			}
 			if (neighborPoint.getAssignedCluster().equalsIgnoreCase("")){
-				neighborPoint.setAssignedCluster(String.valueOf(clusterLabel));
+				neighborPoint.setAssignedCluster(String.valueOf(this.medoidID)+"_"+String.valueOf(clusterLabel));
 			}
 		}
 	}
@@ -136,17 +141,26 @@ public class DBSCANPartitioner {
 	}
 
 	public static void main(String[] args) throws IOException {
-		int numLocals = 4;
-		int maxNeighbors = 5;
-		int numPartitions =8;
-		int minPts = 10;
-		double eps = 15;
-		ChameleonModified datasetLoader = new ChameleonModified();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon_modified.txt");
+		int numLocals = 10;
+		int maxNeighbors = 10;
+		int numPartitions =9;
+		double eps = 10;
+		int minPts= 15;
+		ChameleonData datasetLoader = new ChameleonData();
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
 		Clarans clarans = new Clarans();
 		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
-		DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, 0, bestRanSolution.getMedoidsAssignedPoints().get(0));
-		dbscanpart.run(eps, minPts);
+		for (int i = 0; i < bestRanSolution.getMedoids().length; i++) {
+			DBSCANPartitioner dbscanpart = new DBSCANPartitioner(dataset, i, bestRanSolution.getMedoidsAssignedPoints().get(i));
+			dbscanpart.run(eps, minPts);			
+		}
+		
+		PlotDBSCANPartitioner plotter = new PlotDBSCANPartitioner("regions");
+		plotter.plot(dataset, bestRanSolution);
+		plotter.pack();
+		RefineryUtilities.centerFrameOnScreen(plotter);
+		plotter.setVisible(true); 
+
 	}
 
 }
