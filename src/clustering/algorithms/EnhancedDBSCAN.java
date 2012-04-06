@@ -1,5 +1,6 @@
 package clustering.algorithms;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -7,6 +8,7 @@ import clustering.partitioning.Clarans;
 import clustering.partitioning.Medoid;
 import clustering.partitioning.Node;
 
+import datasets.ChameleonData;
 import datasets.DatasetPoint;
 
 public class EnhancedDBSCAN {
@@ -24,6 +26,15 @@ public class EnhancedDBSCAN {
 		this.clustersCount =0;
 	}
 	
+	/**
+	 * Run enhanced DBSCAN
+	 * @param numLocals number of locals
+	 * @param maxNeighbors max number of neighbors
+	 * @param numPartitions number of partition
+	 * @param eps eps value
+	 * @param minPts min pts value
+	 * @param alpha alpha value
+	 */
 	public void run(int numLocals, int maxNeighbors, int numPartitions, double eps, int minPts, double alpha){
 		this.eps = eps;
 		Clarans clarans = new Clarans();
@@ -160,5 +171,16 @@ public class EnhancedDBSCAN {
 			denseRegions.addAll(m.getRegions());
 		}
 	}
-	
+	public static void main(String[] args) throws IOException {
+		int numLocals = 9;
+		int maxNeighbors = 7;
+		int numPartitions =9;
+		double eps = 10;
+		int minPts= 15;
+		double alpha = 0.5;
+		ChameleonData datasetLoader = new ChameleonData();
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
+		EnhancedDBSCAN eDBSCAN = new EnhancedDBSCAN(dataset);
+		eDBSCAN.run(numLocals, maxNeighbors, numPartitions, eps, minPts, alpha);
+	}
 }
