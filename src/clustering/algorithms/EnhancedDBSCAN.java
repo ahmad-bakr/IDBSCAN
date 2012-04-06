@@ -90,10 +90,12 @@ public class EnhancedDBSCAN {
 		if(r1.getIsInCluster()){
 			clusterID= r1.getClusterID();
 			c = this.clusters.get(clusterID);
+			c.addToPointsList(r2.getPoints());
 			r2.setClusterID(clusterID);
 		}else if (r2.getIsInCluster()){
 			clusterID = r2.getClusterID();
 			c = this.clusters.get(clusterID);
+			c.addToPointsList(r1.getPoints());
 			r1.setClusterID(clusterID);
 		}else{
 			clusterID = this.clustersCount;
@@ -184,10 +186,10 @@ public class EnhancedDBSCAN {
 	public static void main(String[] args) throws IOException {
 		int numLocals = 9;
 		int maxNeighbors = 7;
-		int numPartitions =10;
+		int numPartitions =9;
 		double eps = 10;
-		int minPts= 15;
-		double alpha = 0.01;
+		int minPts= 10;
+		double alpha = 0.2;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
 		EnhancedDBSCAN eDBSCAN = new EnhancedDBSCAN(dataset);
