@@ -7,6 +7,7 @@ public class DatasetPoint {
 	private String assignedCluster;
 	private boolean isVisited;
 	private boolean isNoise;
+	private boolean isBoarder;
 	private int ID;
 	private int indexInPartition;
 	
@@ -16,8 +17,17 @@ public class DatasetPoint {
 		this.originalCluster = cluster;
 		this.isVisited = false;
 		this.isNoise = false;
+		this.isBoarder = false;
 		this.assignedCluster="";
 		this.ID = id;
+	}
+	
+	public void setBoarder(boolean isBoarder) {
+		this.isBoarder = isBoarder;
+	}
+	
+	public boolean getIsBoarder(boolean isBoarder){
+		return this.isBoarder;
 	}
 	
 	public void setVisited(boolean isVisited) {
@@ -83,5 +93,7 @@ public class DatasetPoint {
 	public int getIndexInPartition() {
 		return indexInPartition;
 	}
+	
+	
 
 }

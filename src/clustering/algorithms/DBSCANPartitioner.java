@@ -42,7 +42,7 @@ public class DBSCANPartitioner {
 			point.setVisited(true);
 			ArrayList<DatasetPoint> regionQuery = getRegionQueryUsingTriangularMatrix(point, eps);
 			if(regionQuery.size() < minPts){
-				point.setNoise(true);
+				point.setNoise(true);				
 			}else{
 				expandCluster(point, regionQuery, clusterLabel, eps, minPts);
 				clusterLabel++;
@@ -67,8 +67,9 @@ public class DBSCANPartitioner {
 				neighborPoint.setVisited(true);
 				ArrayList<DatasetPoint> regionQueryOfNeighborPoint = getRegionQueryUsingTriangularMatrix(neighborPoint, eps);
 				if(regionQueryOfNeighborPoint.size() >= minPts){
-					// add regionQueryOfNeighborPoint to regionQuery
 					regionQuery.addAll(regionQueryOfNeighborPoint);
+				}else{
+					neighborPoint.setBoarder(true);
 				}
 			}
 			if (neighborPoint.getAssignedCluster().equalsIgnoreCase("")){
