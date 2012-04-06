@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import org.jfree.ui.RefineryUtilities;
+
+import plot.PlotEhancedDBSCAN;
+
 import clustering.partitioning.Clarans;
 import clustering.partitioning.Medoid;
 import clustering.partitioning.Node;
@@ -60,6 +64,7 @@ public class EnhancedDBSCAN {
 				DenseRegion r2 = this.denseRegions.get(j);
 				if(r2.getIsInCluster()) continue;
 				double connectivity = calculateConnectivityBetweenTwoRegions(r1, r2);
+				System.out.println(connectivity);
 				if(connectivity >= alpha) mergeTwoRegions(r1, r2);
 			}
 		}
@@ -171,16 +176,31 @@ public class EnhancedDBSCAN {
 			denseRegions.addAll(m.getRegions());
 		}
 	}
+	
+	public ArrayList<Cluster> getClusters() {
+		return this.clusters;
+	}
+	
 	public static void main(String[] args) throws IOException {
 		int numLocals = 9;
 		int maxNeighbors = 7;
-		int numPartitions =9;
+		int numPartitions =10;
 		double eps = 10;
 		int minPts= 15;
-		double alpha = 0.5;
+		double alpha = 0.01;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
 		EnhancedDBSCAN eDBSCAN = new EnhancedDBSCAN(dataset);
 		eDBSCAN.run(numLocals, maxNeighbors, numPartitions, eps, minPts, alpha);
+		ArrayList<Cluster> clusters = eDBSCAN.getClusters();
+		System.out.println("***********************");
+		System.out.println(clusters.size());
+		System.out.println("***********************");
+		PlotEhancedDBSCAN plotter = new PlotEhancedDBSCAN("Clusters");
+		plotter.plot(dataset, clusters);
+		plotter.pack();
+		RefineryUtilities.centerFrameOnScreen(plotter);
+		plotter.setVisible(true); 
+
 	}
 }
