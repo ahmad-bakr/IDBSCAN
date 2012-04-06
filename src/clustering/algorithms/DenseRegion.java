@@ -6,10 +6,26 @@ public class DenseRegion {
 	
 	private ArrayList<Integer> points;
 	private ArrayList<Integer> boarderPoints;
+	private int clusterID;
+	private boolean isInCluster;
 	
 	public DenseRegion() {
 		this.points = new ArrayList<Integer>();
 		this.boarderPoints = new ArrayList<Integer>();
+		this.isInCluster = false;
+	}
+	
+	public void setClusterID(int clusterID) {
+		this.clusterID = clusterID;
+		this.isInCluster = true;
+	}
+	
+	public boolean getIsInCluster(){
+		return this.isInCluster;
+	}
+	
+	public int getClusterID() {
+		return clusterID;
 	}
 	
 	public ArrayList<Integer> getBoarderPoints() {

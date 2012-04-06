@@ -13,11 +13,15 @@ public class EnhancedDBSCAN {
 	
 	private ArrayList<DatasetPoint> dataset;
 	private ArrayList<DenseRegion> denseRegions;
+	private ArrayList<Cluster> clusters;
 	private double eps;
-	
+	private int clustersCount;
+
 	public EnhancedDBSCAN(ArrayList<DatasetPoint> dataset) {
 		this.dataset = dataset;
 		this.denseRegions = new ArrayList<DenseRegion>();
+		this.clusters = new ArrayList<Cluster>();
+		this.clustersCount =0;
 	}
 	
 	public void run(int numLocals, int maxNeighbors, int numPartitions, double eps, int minPts, double alpha){
@@ -30,15 +34,61 @@ public class EnhancedDBSCAN {
 		}
 		collectDenseRegions(bestRanSolution.getMedoids());
 		
-		mergeRegions(bestRanSolution,alpha);
+		mergeRegions(alpha);
 	}
 	
-	private void mergeRegions(Node clusteringSolution,double alpha){
+	/**
+	 * Merge regions
+	 * @param alpha alpha merge value
+	 */
+	private void mergeRegions(double alpha){
+		for (int i = 0; i < this.denseRegions.size(); i++) {
+			DenseRegion r1 = this.denseRegions.get(i);
+			if(r1.getIsInCluster()) continue;
+			for (int j = 0; j < i; j++) {
+				DenseRegion r2 = this.denseRegions.get(j);
+				if(r2.getIsInCluster()) continue;
+				double connectivity = calculateConnectivityBetweenTwoRegions(r1, r2);
+				if(connectivity >= alpha) mergeTwoRegions(r1, r2);
+			}
+		}
+		
+		for (int i = 0; i < this.denseRegions.size(); i++) {
+			DenseRegion r = denseRegions.get(i);
+			if (r.getIsInCluster()) continue;
+			Cluster c = new Cluster();
+			c.addToPointsList(r.getPoints());
+			this.clusters.add(c);
+		}
 		
 	}
 	
+	/**
+	 * Merge to regions in clusters
+	 * @param r1 region 1
+	 * @param r2 region 2
+	 */
 	private void mergeTwoRegions(DenseRegion r1, DenseRegion r2){
-		
+		int clusterID =0;
+		Cluster c = null;
+		if(r1.getIsInCluster()){
+			clusterID= r1.getClusterID();
+			c = this.clusters.get(clusterID);
+			r2.setClusterID(clusterID);
+		}else if (r2.getIsInCluster()){
+			clusterID = r2.getClusterID();
+			c = this.clusters.get(clusterID);
+			r1.setClusterID(clusterID);
+		}else{
+			clusterID = this.clustersCount;
+			c = new Cluster();
+			c.addToPointsList(r1.getPoints());
+			c.addToPointsList(r2.getPoints());
+			r1.setClusterID(clusterID);
+			r2.setClusterID(clusterID);
+			this.clusters.add(c);
+			this.clustersCount++;
+		}
 	}
 	
 	private double calculateConnectivityBetweenTwoRegions(DenseRegion r1, DenseRegion r2){
