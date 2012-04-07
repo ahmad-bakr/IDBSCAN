@@ -8,11 +8,13 @@ public class DenseRegion {
 	private ArrayList<Integer> boarderPoints;
 	private int clusterID;
 	private boolean isInCluster;
+	private String ID;
 	
-	public DenseRegion() {
+	public DenseRegion(String id) {
 		this.points = new ArrayList<Integer>();
 		this.boarderPoints = new ArrayList<Integer>();
 		this.isInCluster = false;
+		this.ID = id;
 	}
 	
 	public void setClusterID(int clusterID) {
@@ -42,6 +44,10 @@ public class DenseRegion {
 	public void addBoarderPoint(int pointIndex){
 		this.boarderPoints.add(pointIndex);
 		this.points.add(pointIndex);
+	}
+	
+	public String getID() {
+		return ID;
 	}
 	
 }

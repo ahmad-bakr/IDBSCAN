@@ -80,7 +80,7 @@ public class DBSCANPartitioner {
 		if(this.denseRegions.containsKey(denseRegionLabel)){
 		  this.denseRegions.get(denseRegionLabel).addPoint(point.getID());
 		}else{
-			DenseRegion d = new DenseRegion();
+			DenseRegion d = new DenseRegion(denseRegionLabel);
 			d.addPoint(point.getID());
 			this.denseRegions.put(denseRegionLabel, d);
 		}

@@ -11,6 +11,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
 import clustering.algorithms.Cluster;
+import clustering.algorithms.DenseRegion;
 import datasets.DatasetPoint;
 
 public class PlotEhancedDBSCAN extends ApplicationFrame{
@@ -24,11 +25,18 @@ public class PlotEhancedDBSCAN extends ApplicationFrame{
 
 		for (int i = 0; i < clusters.size(); i++) {
 			Cluster c = clusters.get(i);
-			ArrayList<Integer> points = c.getPointsList();
+			if(!c.getIsActive()) continue;
+			ArrayList<DenseRegion> regions = c.getRegions();
 			XYSeries series = new XYSeries(i);
-			for (int j = 0; j < points.size(); j++) {
-				DatasetPoint p = dataset.get(points.get(j));
-				series.add(p.getX(), p.getY());
+
+			for (int j = 0; j < regions.size(); j++) {
+				DenseRegion r = regions.get(j);
+				ArrayList<Integer> points = r.getPoints();
+				for (int k = 0; k < points.size(); k++) {
+					DatasetPoint p = dataset.get(points.get(k));
+					series.add(p.getX(), p.getY());
+
+				}
 			}
 			datasetCollection.addSeries(series);
 		}

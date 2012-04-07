@@ -59,10 +59,10 @@ public class EnhancedDBSCAN {
 	private void mergeRegions(double alpha){
 		for (int i = 0; i < this.denseRegions.size(); i++) {
 			DenseRegion r1 = this.denseRegions.get(i);
-			if(r1.getIsInCluster()) continue;
 			for (int j = 0; j < i; j++) {
+				
 				DenseRegion r2 = this.denseRegions.get(j);
-				if(r2.getIsInCluster()) continue;
+				if(r1.getIsInCluster() && r2.getIsInCluster() && (r1.getClusterID() == r2.getClusterID())) continue;
 				double connectivity = calculateConnectivityBetweenTwoRegions(r1, r2);
 				System.out.println(connectivity);
 				if(connectivity >= alpha) mergeTwoRegions(r1, r2);
@@ -72,9 +72,11 @@ public class EnhancedDBSCAN {
 		for (int i = 0; i < this.denseRegions.size(); i++) {
 			DenseRegion r = denseRegions.get(i);
 			if (r.getIsInCluster()) continue;
-			Cluster c = new Cluster();
-			c.addToPointsList(r.getPoints());
+			Cluster c = new Cluster(this.clustersCount);
+			r.setClusterID(c.getID());
+			c.addDenseRegion(r);
 			this.clusters.add(c);
+			clustersCount++;
 		}
 		
 	}
@@ -85,27 +87,50 @@ public class EnhancedDBSCAN {
 	 * @param r2 region 2
 	 */
 	private void mergeTwoRegions(DenseRegion r1, DenseRegion r2){
-		int clusterID =0;
 		Cluster c = null;
-		if(r1.getIsInCluster()){
-			clusterID= r1.getClusterID();
-			c = this.clusters.get(clusterID);
-			c.addToPointsList(r2.getPoints());
-			r2.setClusterID(clusterID);
-		}else if (r2.getIsInCluster()){
-			clusterID = r2.getClusterID();
-			c = this.clusters.get(clusterID);
-			c.addToPointsList(r1.getPoints());
-			r1.setClusterID(clusterID);
-		}else{
-			clusterID = this.clustersCount;
-			c = new Cluster();
-			c.addToPointsList(r1.getPoints());
-			c.addToPointsList(r2.getPoints());
-			r1.setClusterID(clusterID);
-			r2.setClusterID(clusterID);
+		int clusterID =0;
+		if(!r1.getIsInCluster() && !r2.getIsInCluster()){
+			c = new Cluster(this.clustersCount);
+			c.addDenseRegion(r1);
+			c.addDenseRegion(r2);
+			r1.setClusterID(c.getID());
+			r2.setClusterID(c.getID());
 			this.clusters.add(c);
 			this.clustersCount++;
+			
+		}
+		else if(r1.getIsInCluster() && r2.getIsInCluster()){
+			mergeCluster(this.clusters.get(r1.getClusterID()), this.clusters.get(r2.getClusterID()));
+		}
+		else if(r1.getIsInCluster()){
+			clusterID= r1.getClusterID();
+			c = this.clusters.get(clusterID);
+			r2.setClusterID(clusterID);	
+			c.addDenseRegion(r2);
+		}
+		else if (r2.getIsInCluster()){
+			clusterID = r2.getClusterID();
+			c = this.clusters.get(clusterID);
+			r1.setClusterID(clusterID);
+			c.addDenseRegion(r1);
+		}
+		
+		
+	}
+	
+	/**
+	 * Merge two clusters
+	 * @param c1 cluster 1
+	 * @param c2 cluster 2
+	 */
+	private void mergeCluster(Cluster c1, Cluster c2){
+		c2.setActive(false);
+		System.out.println("Mergeing cluster " + c1.getID() + "with cluster "+ c2.getID());
+		ArrayList<DenseRegion> c2Regions = c2.getRegions();
+		for (int i = 0; i < c2Regions.size(); i++) {
+			DenseRegion r = c2Regions.get(i);
+			r.setClusterID(c1.getID());
+			c1.addDenseRegion(r);
 		}
 	}
 	
@@ -185,13 +210,13 @@ public class EnhancedDBSCAN {
 	
 	public static void main(String[] args) throws IOException {
 		int numLocals = 9;
-		int maxNeighbors = 7;
-		int numPartitions =9;
+		int maxNeighbors = 5;
+		int numPartitions =70;
 		double eps = 10;
-		int minPts= 10;
-		double alpha = 0.2;
+		int minPts= 20;
+		double alpha = 0.1;
 		ChameleonData datasetLoader = new ChameleonData();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t4.8k.dat");	
 		EnhancedDBSCAN eDBSCAN = new EnhancedDBSCAN(dataset);
 		eDBSCAN.run(numLocals, maxNeighbors, numPartitions, eps, minPts, alpha);
 		ArrayList<Cluster> clusters = eDBSCAN.getClusters();
