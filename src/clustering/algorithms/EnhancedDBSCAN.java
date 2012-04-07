@@ -213,10 +213,10 @@ public class EnhancedDBSCAN {
 		int maxNeighbors = 5;
 		int numPartitions =70;
 		double eps = 10;
-		int minPts= 20;
-		double alpha = 0.1;
+		int minPts= 15;
+		double alpha = 0.05;
 		ChameleonData datasetLoader = new ChameleonData();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t4.8k.dat");	
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
 		EnhancedDBSCAN eDBSCAN = new EnhancedDBSCAN(dataset);
 		eDBSCAN.run(numLocals, maxNeighbors, numPartitions, eps, minPts, alpha);
 		ArrayList<Cluster> clusters = eDBSCAN.getClusters();

@@ -167,9 +167,9 @@ public class DBSCANPartitioner {
 		int maxNeighbors = 7;
 		int numPartitions =9;
 		double eps = 10;
-		int minPts= 15;
+		int minPts= 4;
 		ChameleonData datasetLoader = new ChameleonData();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t8.8k.dat");	
 		Clarans clarans = new Clarans();
 		Node  bestRanSolution = clarans.perform(dataset, numLocals, maxNeighbors, numPartitions);
 		for (int i = 0; i < bestRanSolution.getMedoids().length; i++) {
@@ -191,11 +191,11 @@ public class DBSCANPartitioner {
 		
 		System.out.println("************************************");
 		
-//		PlotDBSCANPartitioner plotter = new PlotDBSCANPartitioner("regions");
-//		plotter.plot(dataset, bestRanSolution);
-//		plotter.pack();
-//		RefineryUtilities.centerFrameOnScreen(plotter);
-//		plotter.setVisible(true); 
+		PlotDBSCANPartitioner plotter = new PlotDBSCANPartitioner("regions");
+		plotter.plot(dataset, bestRanSolution);
+		plotter.pack();
+		RefineryUtilities.centerFrameOnScreen(plotter);
+		plotter.setVisible(true); 
 
 	}
 
