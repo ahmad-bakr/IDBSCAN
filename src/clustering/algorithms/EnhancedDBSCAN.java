@@ -48,8 +48,8 @@ public class EnhancedDBSCAN {
 			dbscanpart.run(eps, minPts);			
 		}
 		collectDenseRegions(bestRanSolution.getMedoids());
-		
 		mergeRegions(alpha);
+		removeNoiseAndLabelOutliers();
 	}
 	
 	/**
@@ -208,15 +208,48 @@ public class EnhancedDBSCAN {
 		return this.clusters;
 	}
 	
+	private void removeNoiseAndLabelOutliers(){
+		for (int i = 0; i < this.dataset.size(); i++) {
+			DatasetPoint p = this.dataset.get(i);
+			if (p.getAssignedCluster().equalsIgnoreCase("")){
+				DenseRegion d = getNearestRegion(p);
+				
+				if(d!=null)d.addPoint(p.getID());
+			}
+		}
+	}
+	
+	private DenseRegion getNearestRegion(DatasetPoint point){
+		DenseRegion denseRegion = null;
+		Double minDistance = Double.MAX_VALUE;
+		for (int i = 0; i < this.denseRegions.size(); i++) {
+			DenseRegion d = this.denseRegions.get(i);
+			ArrayList<Integer> points = d.getPoints();
+			for (int j = 0; j < points.size(); j++) {
+				DatasetPoint p2 = this.dataset.get(points.get(j));
+				if (p2.getIsNoise()) continue;
+				double distance = calculateDistanceBtwTwoPoints(point, p2);
+				if(distance < minDistance){
+					denseRegion = d;
+					minDistance = distance;
+				}
+			}
+		}
+		
+		if(minDistance > this.eps) return null;
+		
+		return denseRegion;
+	}
+	
 	public static void main(String[] args) throws IOException {
 		int numLocals = 9;
 		int maxNeighbors = 5;
-		int numPartitions =70;
-		double eps = 10;
-		int minPts= 15;
-		double alpha = 0.05;
+		int numPartitions =75;
+		double eps = 5;
+		int minPts= 12;
+		double alpha = 0.01;
 		ChameleonData datasetLoader = new ChameleonData();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");	
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t5.8k.dat");	
 		EnhancedDBSCAN eDBSCAN = new EnhancedDBSCAN(dataset);
 		eDBSCAN.run(numLocals, maxNeighbors, numPartitions, eps, minPts, alpha);
 		ArrayList<Cluster> clusters = eDBSCAN.getClusters();
