@@ -1,5 +1,7 @@
 package datasets;
 
+import java.util.ArrayList;
+
 public class DatasetPoint {
 	private double x;
 	private double y;
@@ -10,6 +12,7 @@ public class DatasetPoint {
 	private boolean isBoarder;
 	private int ID;
 	private int indexInPartition;
+	private ArrayList<Integer> pointsAtEpsIndexs;
 	
 	public DatasetPoint(String cluster, double x, double y, int id) {
 		this.x = x;
@@ -20,6 +23,15 @@ public class DatasetPoint {
 		this.isBoarder = false;
 		this.assignedCluster="";
 		this.ID = id;
+		this.pointsAtEpsIndexs = new ArrayList<Integer>(); 
+	}
+	
+	public ArrayList<Integer> getPointsAtEpsIndexs() {
+		return pointsAtEpsIndexs;
+	}
+	
+	public void addToNeighborhoodPoints(int i){
+		this.pointsAtEpsIndexs.add(i);
 	}
 	
 	public void setBoarder(boolean isBoarder) {
