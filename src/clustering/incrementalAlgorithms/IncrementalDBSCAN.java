@@ -1,5 +1,6 @@
 package clustering.incrementalAlgorithms;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -96,22 +97,41 @@ public class IncrementalDBSCAN {
 	 * @param pointsIDs points of updSeed
 	 * @return list of clusters ids
 	 */
-	public ArrayList<String> getClusterOfPoints(ArrayList<Integer> pointsIDs){
-		ArrayList<String> clusterIDs = new ArrayList<String>();
+	public ArrayList<Cluster> getClusterOfPoints(ArrayList<Integer> pointsIDs){
+		ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 		Hashtable<String, Boolean> idsSeen = new Hashtable<String, Boolean>();
 		for (int i = 0; i < pointsIDs.size(); i++) {
 			DatasetPoint p = this.dataset.get(pointsIDs.get(i));
 			if(!idsSeen.containsKey(p.getAssignedCluster())){
-				clusterIDs.add(p.getAssignedCluster());
+				clusters.add(this.clustersList.get(Integer.parseInt(p.getAssignedCluster())));
 				idsSeen.put(p.getAssignedCluster(), true);
 			}
 		}
-		return clusterIDs;
+		return clusters;
 	}
 	
 	
+	/**
+	 * Merge the clusters into the first cluster
+	 * @param point point
+	 * @param indexs updSeed points
+	 */
 	public void mergeClusters(DatasetPoint point,ArrayList<Integer> indexs){
-		
+		ArrayList<Cluster> clusters = getClusterOfPoints(indexs);
+		Cluster masterCluster = clusters.get(0);
+		String masterClusterID = String.valueOf(masterCluster.getID());
+		point.setAssignedCluster(masterClusterID);
+		masterCluster.addPoint(point.getID());
+		for (int i = 1; i < clusters.size(); i++) {
+			Cluster c = clusters.get(i);
+			c.setActive(false);
+			ArrayList<Integer> cPoints = c.getPointsIDs();
+			for (int j = 0; j < cPoints.size(); j++) {
+				DatasetPoint p = this.dataset.get(cPoints.get(j));
+				p.setAssignedCluster(masterClusterID);
+				masterCluster.addPoint(p.getID());
+			}
+		}
 	}
 	
 	/**
