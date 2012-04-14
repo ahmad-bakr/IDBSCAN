@@ -10,6 +10,7 @@ public class DatasetPoint {
 	private boolean isVisited;
 	private boolean isNoise;
 	private boolean isBoarder;
+	private boolean isCore;
 	private int ID;
 	private int indexInPartition;
 	private ArrayList<Integer> pointsAtEpsIndexs;
@@ -21,6 +22,7 @@ public class DatasetPoint {
 		this.isVisited = false;
 		this.isNoise = false;
 		this.isBoarder = false;
+		this.isCore = false;
 		this.assignedCluster="";
 		this.ID = id;
 		this.pointsAtEpsIndexs = new ArrayList<Integer>(); 
@@ -36,6 +38,11 @@ public class DatasetPoint {
 	
 	public void setBoarder(boolean isBoarder) {
 		this.isBoarder = isBoarder;
+	}
+	
+	public boolean getIsCore(int minPts){
+		if(this.pointsAtEpsIndexs.size()>= minPts) return true;
+		return false;
 	}
 	
 	public boolean getIsBoarder(){
