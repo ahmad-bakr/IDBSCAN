@@ -1,6 +1,5 @@
 package clustering.incrementalAlgorithms;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -24,6 +23,10 @@ public class IncrementalDBSCAN {
 		this.clustersCount = 0;
 	}
 	
+	/**
+	 * Cluster a new point
+	 * @param point new point
+	 */
 	public void clusterPoint(DatasetPoint point){
 		ArrayList<Integer> updSeedPointIndexs = getUpdSeedSet(point);
 		if(updSeedPointIndexs.size()==0){
