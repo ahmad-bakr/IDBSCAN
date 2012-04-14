@@ -13,12 +13,14 @@ public class IncrementalDBSCAN {
 	private ArrayList<Cluster> clustersList;
 	private int minPts;
 	private double eps;
+	private int clustersCount;
 	
 	public IncrementalDBSCAN(ArrayList<DatasetPoint> dataset, int minpts, double eps) {
 		this.dataset = dataset;
 		this.minPts = minpts;
 		this.eps = eps;
 		this.clustersList = new ArrayList<Cluster>();
+		this.clustersCount = 0;
 	}
 	
 	public void clusterPoint(DatasetPoint point){
@@ -107,20 +109,47 @@ public class IncrementalDBSCAN {
 		return clusterIDs;
 	}
 	
+	
 	public void mergeClusters(DatasetPoint point,ArrayList<Integer> indexs){
 		
 	}
 	
+	/**
+	 * Add point to cluster (Given that all points at indexs come from only one cluster)
+	 * @param point the point
+	 * @param indexs indexes point
+	 */
 	public void joinCluster(DatasetPoint point, ArrayList<Integer> indexs){
-		
+		String clusterID = this.dataset.get(indexs.get(0)).getAssignedCluster();
+		Cluster c = this.clustersList.get(Integer.parseInt(clusterID));
+		c.addPoint(point.getID());
+		point.setAssignedCluster(clusterID);
 	}
 	
+	/**
+	 * Mark point as noise
+	 * @param point point
+	 */
 	public void markAsNoise(DatasetPoint point){
-		
+		point.setNoise(true);
 	}
 	
-	public void createCluster(DatasetPoint point, ArrayList<Integer> seedPoints){
-		
+	/**
+	 * create new cluster with the points
+	 * @param point datapoint
+	 * @param seedPointsIDs updSeed points
+	 */
+	public void createCluster(DatasetPoint point, ArrayList<Integer> seedPointsIDs){
+		Cluster c = new Cluster(this.clustersCount);
+		String clusterID = String.valueOf(c.getID());
+		this.clustersCount++;
+		point.setAssignedCluster(clusterID);
+		c.addPoint(point.getID());
+		for (int i = 0; i < seedPointsIDs.size(); i++) {
+			DatasetPoint p = this.dataset.get(seedPointsIDs.get(i));
+			p.setAssignedCluster(clusterID);
+			c.addPoint(p.getID());
+		}
 	}
 	
 	/**
