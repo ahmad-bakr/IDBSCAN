@@ -24,13 +24,17 @@ public class IncrementalDBSCAN {
 		ArrayList<Integer> updSeedPointIndexs = getUpdSeedSet(point);
 		if(updSeedPointIndexs.size()==0){
 			 markAsNoise(point);
-		}else if(updSeedContainsCorePointsWithNoCluster(updSeedPointIndexs)){
+		}
+		else if(updSeedContainsCorePointsWithNoCluster(updSeedPointIndexs)){
 			createCluster(point, updSeedPointIndexs);
-		}else if(updSeedContainsCorePointsFromOneCluster(updSeedPointIndexs)){
+		}
+		else if(updSeedContainsCorePointsFromOneCluster(updSeedPointIndexs)){
 			joinCluster(point, updSeedPointIndexs);
-		}else if(updSeedContainsCoreObjectsFromMultipleClusters(updSeedPointIndexs)){
+		}
+		else{
 			mergeClusters(point, updSeedPointIndexs);
 		}
+		point.setVisited(true);
 	}
 	
 	/**
@@ -57,19 +61,33 @@ public class IncrementalDBSCAN {
 		return updSeedIndex;
 	}
 
+	/**
+	 * Check if all the core points has no assigned cluster
+	 * @param indexs updSeet set
+	 * @return true if no cluster is assigned to all points
+	 */
 	public boolean updSeedContainsCorePointsWithNoCluster(ArrayList<Integer> indexs){
-		return false;
+		for (int i = 0; i < indexs.size(); i++) {
+			DatasetPoint p = this.dataset.get(indexs.get(i));
+			if(!p.getAssignedCluster().equalsIgnoreCase("")) return false;
+		}
+		return true;
 	}
 	
+	/**
+	 * Check if all points has the same cluster
+	 * @param indexs updSeed 
+	 * @return true if all points have the same clusters
+	 */
 	public boolean updSeedContainsCorePointsFromOneCluster(ArrayList<Integer> indexs){
-		return false;
+		String clusterID = this.dataset.get(indexs.get(0)).getAssignedCluster();
+		for (int i = 1; i < indexs.size(); i++) {
+			DatasetPoint p = this.dataset.get(indexs.get(i));
+			if(!clusterID.equalsIgnoreCase(p.getAssignedCluster())) return false;
+		}
+		return true;
 	}
-	
-	public boolean updSeedContainsCoreObjectsFromMultipleClusters(ArrayList<Integer> indexs){
-		return false;
-	}
-	
-	
+
 	public void mergeClusters(DatasetPoint point,ArrayList<Integer> indexs){
 		
 	}
