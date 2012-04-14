@@ -1,6 +1,7 @@
 package clustering.incrementalAlgorithms;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import clustering.algorithms.Cluster;
 
@@ -88,6 +89,24 @@ public class IncrementalDBSCAN {
 		return true;
 	}
 
+	/**
+	 * Collect the clusters ids of a updSeed
+	 * @param pointsIDs points of updSeed
+	 * @return list of clusters ids
+	 */
+	public ArrayList<String> getClusterOfPoints(ArrayList<Integer> pointsIDs){
+		ArrayList<String> clusterIDs = new ArrayList<String>();
+		Hashtable<String, Boolean> idsSeen = new Hashtable<String, Boolean>();
+		for (int i = 0; i < pointsIDs.size(); i++) {
+			DatasetPoint p = this.dataset.get(pointsIDs.get(i));
+			if(!idsSeen.containsKey(p.getAssignedCluster())){
+				clusterIDs.add(p.getAssignedCluster());
+				idsSeen.put(p.getAssignedCluster(), true);
+			}
+		}
+		return clusterIDs;
+	}
+	
 	public void mergeClusters(DatasetPoint point,ArrayList<Integer> indexs){
 		
 	}
