@@ -10,22 +10,30 @@ public class DatasetPoint {
 	private boolean isVisited;
 	private boolean isNoise;
 	private boolean isBoarder;
-	private boolean isCore;
 	private int ID;
 	private int indexInPartition;
+	private int pointCausedToBeCore;
 	private ArrayList<Integer> pointsAtEpsIndexs;
 	
 	public DatasetPoint(String cluster, double x, double y, int id) {
 		this.x = x;
 		this.y = y;
+		this.pointCausedToBeCore =-1;
 		this.originalCluster = cluster;
 		this.isVisited = false;
 		this.isNoise = false;
 		this.isBoarder = false;
-		this.isCore = false;
 		this.assignedCluster="";
 		this.ID = id;
 		this.pointsAtEpsIndexs = new ArrayList<Integer>(); 
+	}
+	
+	public int getPointCausedToBeCore() {
+		return pointCausedToBeCore;
+	}
+	
+	public void setPointCausedToBeCore(int pointCausedToBeCore) {
+		this.pointCausedToBeCore = pointCausedToBeCore;
 	}
 	
 	public ArrayList<Integer> getPointsAtEpsIndexs() {

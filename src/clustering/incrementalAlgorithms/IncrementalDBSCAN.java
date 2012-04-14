@@ -33,9 +33,27 @@ public class IncrementalDBSCAN {
 		}
 	}
 	
+	/**
+	 * Get the updSeed set of a datapoint
+	 * @param point point
+	 * @return updSeed set
+	 */
 	public ArrayList<Integer> getUpdSeedSet(DatasetPoint point){
 		ArrayList<Integer> updSeedIndex = new ArrayList<Integer>();
-		
+		for (int i = 0; i < this.dataset.size(); i++) {
+			DatasetPoint p = this.dataset.get(i);
+			if(!p.getIsVisited()) break;
+			double distance = calculateDistanceBtwTwoPoints(point, p);
+			if(distance > this.eps) continue;
+			point.addToNeighborhoodPoints(p.getID());
+			p.addToNeighborhoodPoints(point.getID());
+			if(p.getPointsAtEpsIndexs().size() == this.minPts){
+				 p.setPointCausedToBeCore(point.getID());
+				 if(!p.getAssignedCluster().equalsIgnoreCase("")) updSeedIndex.add(p.getID());
+				 continue;
+			}
+			if(p.getIsCore(this.minPts)) updSeedIndex.add(p.getID());
+		}
 		return updSeedIndex;
 	}
 
@@ -68,6 +86,18 @@ public class IncrementalDBSCAN {
 		
 	}
 	
+	/**
+	 * calculate the Euclidean Distance between two points
+	 * @param p1 point 1
+	 * @param p2 point 2
+	 * @return Distance
+	 */
+	public double calculateDistanceBtwTwoPoints(DatasetPoint p1, DatasetPoint p2){
+		double xDiff = p1.getX() - p2.getX();
+		double yDiff = p1.getY() - p2.getY();
+		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+	}
+
 	
 	
 
