@@ -34,13 +34,15 @@ public class DatasetPlotter extends ApplicationFrame{
 		Enumeration keys = clustersHash.keys();
 		while (keys.hasMoreElements()) {
 			String clusterID = (String) keys.nextElement();
-			XYSeries series = new XYSeries(clusterID);
 			ArrayList<DatasetPoint> pointsList = clustersHash.get(clusterID);
-			for (int i = 0; i < pointsList.size(); i++) {
-				DatasetPoint p = pointsList.get(i);
-				series.add(p.getX(), p.getY());
-			}// end looping for points
-			datasetCollection.addSeries(series);
+			if(pointsList.size() > 30){
+				XYSeries series = new XYSeries(clusterID);
+				for (int i = 0; i < pointsList.size(); i++) {
+					DatasetPoint p = pointsList.get(i);
+					series.add(p.getX(), p.getY());
+				}// end looping for points
+				datasetCollection.addSeries(series);
+			}
 		}// end looping for clusters
 		JFreeChart chart = ChartFactory.createScatterPlot("Clusters", "X", "Y", datasetCollection, PlotOrientation.VERTICAL, true, true, false);
 		ChartPanel chartPanel = new ChartPanel(chart);

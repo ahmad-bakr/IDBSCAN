@@ -27,6 +27,15 @@ public class PlotEhancedDBSCAN extends ApplicationFrame{
 			Cluster c = clusters.get(i);
 			if(!c.getIsActive()) continue;
 			ArrayList<DenseRegion> regions = c.getRegions();
+			
+			int totalNumberOfPoints = 0;
+			for (int j = 0; j < regions.size(); j++) {
+				totalNumberOfPoints+= regions.get(j).getPoints().size();
+			}
+			
+			if(totalNumberOfPoints < 50) continue;
+			
+			
 			XYSeries series = new XYSeries(i);
 
 			for (int j = 0; j < regions.size(); j++) {
