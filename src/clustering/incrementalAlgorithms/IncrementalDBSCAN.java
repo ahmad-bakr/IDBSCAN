@@ -31,6 +31,7 @@ public class IncrementalDBSCAN {
 	
 	public void run(){
 		for (int i = 0; i < this.dataset.size(); i++) {
+			System.out.println(i);
 			DatasetPoint p = this.dataset.get(i);
 			clusterPoint(p);
 		}
@@ -150,6 +151,7 @@ public class IncrementalDBSCAN {
 				masterCluster.addPoint(p.getID());
 			}
 		}
+		//handleInsertionEffect(point, indexs);
 	}
 	
 	/**
@@ -162,6 +164,7 @@ public class IncrementalDBSCAN {
 		Cluster c = this.clustersList.get(Integer.parseInt(clusterID));
 		c.addPoint(point.getID());
 		point.setAssignedCluster(clusterID);
+	//	handleInsertionEffect(point, indexs);
 	}
 	
 	/**
@@ -189,6 +192,24 @@ public class IncrementalDBSCAN {
 			c.addPoint(p.getID());
 		}
 		this.clustersList.add(c);
+	//	handleInsertionEffect(point, seedPointsIDs);
+	}
+	
+	private void handleInsertionEffect(DatasetPoint point , ArrayList<Integer> seedPointsIDs){
+		seedPointsIDs.add(point.getID());
+		String clusterID = point.getAssignedCluster();
+		System.out.println("undone");
+		for (int i = 0; i < seedPointsIDs.size(); i++) {
+			DatasetPoint p = this.dataset.get(seedPointsIDs.get(i));
+			if(!p.getIsCore(this.minPts)) continue;
+			ArrayList<Integer> pointsAtEPS = p.getPointsAtEpsIndexs();
+			for (int j = 0; j < pointsAtEPS.size(); j++) {
+				DatasetPoint pp = this.dataset.get(pointsAtEPS.get(j));
+				if(pp.getAssignedCluster().equalsIgnoreCase("")) pp.setAssignedCluster(clusterID);
+			}
+			
+		}
+		System.out.println("done");
 	}
 	
 	/**
@@ -216,6 +237,7 @@ public class IncrementalDBSCAN {
 			for (int j = 0; j < neighbors.size(); j++) {
 				DatasetPoint neighbor = this.dataset.get(neighbors.get(j));
 				if(neighbor.getAssignedCluster().equalsIgnoreCase("") || !neighbor.getIsCore(this.minPts)) continue;
+				if(neighbor.getIsNoise()) continue;	
 				p.setAssignedCluster(neighbor.getAssignedCluster());
 				Cluster c = this.clustersList.get(Integer.parseInt(p.getAssignedCluster()));
 				c.addPoint(p.getID());
@@ -225,8 +247,8 @@ public class IncrementalDBSCAN {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		double eps = 6.5;
-		int minPts= 12;
+		double eps = 7.8;
+		int minPts= 21;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t5.8k.dat");
 		IncrementalDBSCAN incDBSCAN = new IncrementalDBSCAN(dataset, minPts, eps);
