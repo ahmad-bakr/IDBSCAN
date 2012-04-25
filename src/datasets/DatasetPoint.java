@@ -14,6 +14,7 @@ public class DatasetPoint {
 	private int indexInPartition;
 	private int pointCausedToBeCore;
 	private ArrayList<Integer> pointsAtEpsIndexs;
+	private int assignedCentroidID;
 	
 	public DatasetPoint(String cluster, double x, double y, int id) {
 		this.x = x;
@@ -31,6 +32,15 @@ public class DatasetPoint {
 	public int getPointCausedToBeCore() {
 		return pointCausedToBeCore;
 	}
+	
+	public void setAssignedCentroidID(int assignedCentroidID) {
+		this.assignedCentroidID = assignedCentroidID;
+	}
+	
+	public int getAssignedCentroidID() {
+		return assignedCentroidID;
+	}
+	
 	
 	public void setPointCausedToBeCore(int pointCausedToBeCore) {
 		this.pointCausedToBeCore = pointCausedToBeCore;
