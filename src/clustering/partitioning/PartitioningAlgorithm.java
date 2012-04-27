@@ -3,6 +3,8 @@ package clustering.partitioning;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.xml.crypto.Data;
+
 import org.jfree.ui.RefineryUtilities;
 
 import plot.PlotPartitioning;
@@ -13,6 +15,12 @@ import datasets.DatasetPoint;
 public class PartitioningAlgorithm {
  	private ArrayList<DatasetPoint> dataset;
 	private Centroid[] centroids;
+
+	/**
+	 * Constructor
+	 * @param dataset dataset
+	 * @param k number of partitions
+	 */
 	public PartitioningAlgorithm(ArrayList<DatasetPoint> dataset, int k) {
 		this.dataset= dataset;
 		this.centroids = new Centroid[k];
@@ -23,27 +31,51 @@ public class PartitioningAlgorithm {
 		}
 	}
 	
+	/**
+	 * return the centroids
+	 * @return centroids
+	 */
 	public Centroid[] getCentroids() {
 		return centroids;
 	}
 	
+	/**
+	 * run the partitioning algorithm to al data
+	 */
 	public void run(){
 		for (int i = 0; i < this.dataset.size(); i++) {
 			DatasetPoint point = this.dataset.get(i);
-			double distance = Double.MAX_VALUE;
-			Centroid cen = null;
-			for (int j = 0; j < this.centroids.length; j++) {
-				double d = calculateDistanceBtwTwoPoints(this.centroids[j].getX(), this.centroids[j].getY(), point);
-				if(d<distance){
-					cen = this.centroids[j];
-					distance = d;
-				}
-			}
-			point.setAssignedCentroidID(cen.getID());
-			cen.updateCentroid(point);
+			partitionPoint(point);
 		}
 	}
 	
+	/**
+	 * Insert point into partitions
+	 * @param point data point
+	 * @return the partition id
+	 */
+	public int partitionPoint(DatasetPoint point){
+		double distance = Double.MAX_VALUE;
+		Centroid cen = null;
+		for (int j = 0; j < this.centroids.length; j++) {
+			double d = calculateDistanceBtwTwoPoints(this.centroids[j].getX(), this.centroids[j].getY(), point);
+			if(d<distance){
+				cen = this.centroids[j];
+				distance = d;
+			}
+		}
+		point.setAssignedCentroidID(cen.getID());
+		cen.updateCentroid(point);
+		return cen.getID();
+	}
+	
+	/**
+	 * calculate the distance between two points
+	 * @param x  x
+	 * @param y y 
+	 * @param p2 data point
+	 * @return distance between two points
+	 */
 	private double calculateDistanceBtwTwoPoints(double x, double y, DatasetPoint p2){
 		double xDiff = x - p2.getX();
 		double yDiff = y - p2.getY();
