@@ -9,12 +9,22 @@ public class DenseRegion {
 	private int clusterID;
 	private boolean isInCluster;
 	private String ID;
+	private boolean active;
 	
 	public DenseRegion(String id) {
 		this.points = new ArrayList<Integer>();
 		this.boarderPoints = new ArrayList<Integer>();
 		this.isInCluster = false;
 		this.ID = id;
+		this.active = true;
+	}
+	
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	
+	public Boolean getActive() {
+		return active;
 	}
 	
 	public void setClusterID(int clusterID) {

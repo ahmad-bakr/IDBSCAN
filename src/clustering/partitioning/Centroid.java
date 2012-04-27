@@ -1,5 +1,7 @@
 package clustering.partitioning;
 
+import java.util.ArrayList;
+
 import datasets.DatasetPoint;
 
 public class Centroid {
@@ -15,6 +17,7 @@ public class Centroid {
 	private double c;
 	private double k;
 	private double taw;
+	ArrayList<Integer> pointsIDS;
 	
 	public Centroid(int id, double x, double y) {
 		this.ID = id;
@@ -29,11 +32,13 @@ public class Centroid {
 		this.c = 0.5;
 		this.k = 0.5;
 		this.taw = 0;
+		this.pointsIDS = new ArrayList<Integer>();
 		this.updateRate[0]= this.updateRate[1]=  this.SD[0] = this.SD[1] = this.pHat[0] = this.pHat[1] = this.p[0] = this.p[1] = 0;
 		
 	}
 	
 	public void updateCentroid(DatasetPoint p){
+		this.pointsIDS.add(p.getID());
 		double lambda = 0.5*(1- (calculateDotPoroduct(this.x, this.y, p.getX(), p.getY())/calculateMag(this.x, this.y, p.getX(), p.getY())));
 		this.taw = Math.exp(-this.alpha*(1-lambda));
 		this.taw = this.k*this.taw + (1-this.k) * this.taw;

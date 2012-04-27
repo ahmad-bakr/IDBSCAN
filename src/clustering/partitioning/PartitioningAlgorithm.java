@@ -52,7 +52,7 @@ public class PartitioningAlgorithm {
 
 	
 	public static void main(String[] args) throws IOException {
-		int k =3;
+		int k =25;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t5.8k.dat");
 		PartitioningAlgorithm p = new PartitioningAlgorithm(dataset, k);
