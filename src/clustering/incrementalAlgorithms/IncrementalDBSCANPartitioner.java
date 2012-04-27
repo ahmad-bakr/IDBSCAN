@@ -9,13 +9,14 @@ public class IncrementalDBSCANPartitioner {
 
 	private ArrayList<DatasetPoint> partitionPoints;
 	private ArrayList<DenseRegion> denseRegions;
+	private ArrayList<DatasetPoint> dataset;
 	private int ID;
 	private int minPts;
 	private double eps;
 	private int pointsCount;
 	private int denseRegionCount;
 
-	public IncrementalDBSCANPartitioner(int id, int minpts, double eps) {
+	public IncrementalDBSCANPartitioner(int id, int minpts, double eps, ArrayList<DatasetPoint> dataset) {
 		this.ID = id;
 		this.partitionPoints = new ArrayList<DatasetPoint>();
 		this.denseRegions = new ArrayList<DenseRegion>();
@@ -23,6 +24,7 @@ public class IncrementalDBSCANPartitioner {
 		this.eps = eps;
 		this.pointsCount = 0;
 		this.denseRegionCount = 0;
+		this.dataset = dataset;
 	}
 
 	/**
@@ -67,15 +69,15 @@ public class IncrementalDBSCANPartitioner {
 		ArrayList<DenseRegion> regions = getDenseRegionsOfPoints(indexs);
 		DenseRegion masterRegion = regions.get(0);
 		point.setAssignedCluster(masterRegion.getID());
-		masterRegion.addPoint(point.getIndexInPartition());
+		masterRegion.addPoint(point.getID());
 		for (int i = 1; i < regions.size(); i++) {
 			DenseRegion d = regions.get(i);
 			d.setActive(false);
 			ArrayList<Integer> dPoints = d.getPoints();
 			for (int j = 0; j < dPoints.size(); j++) {
-				DatasetPoint p = this.partitionPoints.get(dPoints.get(j));
+				DatasetPoint p = this.partitionPoints.get(this.dataset.get(dPoints.get(j)).getIndexInPartition());
 				p.setAssignedCluster(masterRegion.getID());
-				masterRegion.addPoint(p.getIndexInPartition());
+				masterRegion.addPoint(p.getID());
 			}
 		}
 	}
@@ -114,7 +116,7 @@ public class IncrementalDBSCANPartitioner {
 	private void joinDenseRegion(DatasetPoint point, ArrayList<Integer> indexs) {
 		String denseRegionID = this.partitionPoints.get(indexs.get(0)).getAssignedCluster().split("_")[1];
 		DenseRegion d = this.denseRegions.get(Integer.parseInt(denseRegionID));
-		d.addPoint(point.getIndexInPartition());
+		d.addPoint(point.getID());
 		point.setAssignedCluster(d.getID());
 	}
 
@@ -125,10 +127,8 @@ public class IncrementalDBSCANPartitioner {
 	 *          updSeed
 	 * @return true if all points have the same clusters
 	 */
-	private boolean updSeedContainsCorePointsFromOneCluster(
-			ArrayList<Integer> indexs) {
-		String clusterID = this.partitionPoints.get(indexs.get(0))
-				.getAssignedCluster();
+	private boolean updSeedContainsCorePointsFromOneCluster(ArrayList<Integer> indexs) {
+		String clusterID = this.partitionPoints.get(indexs.get(0)).getAssignedCluster();
 		for (int i = 1; i < indexs.size(); i++) {
 			DatasetPoint p = this.partitionPoints.get(indexs.get(i));
 			if (!clusterID.equalsIgnoreCase(p.getAssignedCluster()))
@@ -145,16 +145,15 @@ public class IncrementalDBSCANPartitioner {
 	 * @param seedPointsIDs
 	 *          updSeed points
 	 */
-	private void createDenseRegion(DatasetPoint point,
-			ArrayList<Integer> seedPointsIDs) {
+	private void createDenseRegion(DatasetPoint point, ArrayList<Integer> seedPointsIDs) {
 		DenseRegion d = new DenseRegion(this.ID + "_" + this.denseRegionCount);
 		this.denseRegionCount++;
 		point.setAssignedCluster(d.getID());
-		d.addPoint(point.getIndexInPartition());
+		d.addPoint(point.getID());
 		for (int i = 0; i < seedPointsIDs.size(); i++) {
 			DatasetPoint p = this.partitionPoints.get(seedPointsIDs.get(i));
 			p.setAssignedCluster(d.getID());
-			d.addPoint(p.getIndexInPartition());
+			d.addPoint(p.getID());
 		}
 		this.denseRegions.add(d);
 	}
@@ -190,10 +189,10 @@ public class IncrementalDBSCANPartitioner {
 			double distance = calculateDistanceBtwTwoPoints(point, p);
 			if (distance > this.eps)
 				continue;
-			point.addToNeighborhoodPoints(p.getIndexInPartition());
-			p.addToNeighborhoodPoints(point.getIndexInPartition());
+			point.addToNeighborhoodPoints(p.getID());
+			p.addToNeighborhoodPoints(point.getID());
 			if (p.getPointsAtEpsIndexs().size() == this.minPts) {
-				p.setPointCausedToBeCore(point.getIndexInPartition());
+				p.setPointCausedToBeCore(point.getID());
 				updSeedIndex.add(p.getIndexInPartition());
 				continue;
 			}
