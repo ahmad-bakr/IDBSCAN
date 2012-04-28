@@ -37,13 +37,12 @@ public class IncrementalDBSCANPartitioner {
 		clusterPoint(p);
 		this.partitionPoints.add(p);
 		this.pointsCount++;
+		if(!p.getIsCore(minPts) && !p.getIsNoise()) System.out.println("border");
 	}
 
 	/**
 	 * Cluster a new point
-	 * 
-	 * @param point
-	 *          new point
+	 * @param point new point
 	 */
 	private void clusterPoint(DatasetPoint point) {
 		ArrayList<Integer> updSeedPointIndexs = getUpdSeedSet(point);
