@@ -252,7 +252,7 @@ public class IncrementalDBSCAN {
 		double eps = 7.8;
 		int minPts= 21;
 		ChameleonData datasetLoader = new ChameleonData();
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t5.8k.dat");
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/all.txt");
 		long startTime = System.currentTimeMillis();
 		IncrementalDBSCAN incDBSCAN = new IncrementalDBSCAN(dataset, minPts, eps);
 		incDBSCAN.run();

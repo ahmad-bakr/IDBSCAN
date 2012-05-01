@@ -62,7 +62,7 @@ public class ChameleonData implements DatasetsIF{
 
 	public static void main(String[] args) throws IOException {
 		ChameleonData dataset = new ChameleonData();
-		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t7.10k.dat");
+		Hashtable<String, ArrayList<DatasetPoint>> clustersHash = dataset.load("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/all.txt");
 		Enumeration keys = clustersHash.keys();
 		while (keys.hasMoreElements()) {
 			String clusterID = (String) keys.nextElement();
