@@ -1,10 +1,12 @@
 package evaluation;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import org.jfree.data.general.Dataset;
 
 import clustering.algorithms.Cluster;
+import clustering.algorithms.DenseRegion;
 import datasets.DatasetPoint;
 
 public class DunnIndex {
@@ -18,6 +20,23 @@ public class DunnIndex {
 		this.maxClusterSize = 0;
 		this.clusters = clusters;
 		this.maxClusterSize = calculateMaxClusterSize();
+	}
+	
+	public DunnIndex(ArrayList<Cluster> clusters, ArrayList<DenseRegion> denseRegions ,ArrayList<DatasetPoint> dataset){
+		this.dataset = dataset;
+		this.maxClusterSize = 0;
+		this.clusters = clusters;
+		for (int i = 0; i < clusters.size(); i++) {
+			Cluster c = this.clusters.get(i);
+			if(!c.getIsActive()) continue;
+   		ArrayList<DenseRegion> clusterDenseRegions = c.getRegions();
+   		for (int j = 0; j < clusterDenseRegions.size(); j++) {
+				DenseRegion d = clusterDenseRegions.get(j);
+				c.addPointsList(d.getPoints());
+   		}
+		}
+		this.maxClusterSize = calculateMaxClusterSize();
+		
 	}
 	
 	/**

@@ -50,4 +50,8 @@ public class Cluster {
 		this.regions.add(region);
 	}
 	
+	public void addPointsList(ArrayList<Integer> points){
+		this.pointsIDs.addAll(points);
+	}
+	
 }
