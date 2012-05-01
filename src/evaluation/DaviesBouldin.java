@@ -1,26 +1,22 @@
 package evaluation;
 
 import java.util.ArrayList;
+
 import clustering.algorithms.Cluster;
 import clustering.algorithms.DenseRegion;
 import datasets.DatasetPoint;
 
-public class DunnIndex {
-	
+public class DaviesBouldin {
 	private ArrayList<DatasetPoint> dataset;
-	private double maxClusterSize;
 	private ArrayList<Cluster> clusters;
 
-	public DunnIndex(ArrayList<Cluster> clusters, ArrayList<DatasetPoint> dataset) {
+	public DaviesBouldin(ArrayList<Cluster> clusters, ArrayList<DatasetPoint> dataset) {
 		this.dataset = dataset;
-		this.maxClusterSize = 0;
 		this.clusters = clusters;
-		this.maxClusterSize = calculateMaxClusterSize();
 	}
 	
-	public DunnIndex(ArrayList<Cluster> clusters, ArrayList<DenseRegion> denseRegions ,ArrayList<DatasetPoint> dataset){
+	public DaviesBouldin(ArrayList<Cluster> clusters, ArrayList<DenseRegion> denseRegions ,ArrayList<DatasetPoint> dataset) {
 		this.dataset = dataset;
-		this.maxClusterSize = 0;
 		this.clusters = clusters;
 		for (int i = 0; i < clusters.size(); i++) {
 			Cluster c = this.clusters.get(i);
@@ -31,32 +27,32 @@ public class DunnIndex {
 				c.addPointsList(d.getPoints());
    		}
 		}
-		this.maxClusterSize = calculateMaxClusterSize();
-		
 	}
 	
-	/**
-	 * calculate the dunn index between two clusters
-	 * @param clusters clusters 
-	 * @param dataset dataset
-	 * @return dunn index
-	 */
-	public double calculateDunnIndex(){
-		double minDI = Double.MAX_VALUE;
-		for (int i = 0; i < clusters.size(); i++) {
-			Cluster ci = clusters.get(i);
+	public double calculateDaviesMeasure(){
+		double daviseMeasure = 0;
+		for (int i = 0; i < this.clusters.size(); i++) {
+			Cluster ci = this.clusters.get(i);
 			if(!ci.getIsActive()) continue;
-			for (int j = 0; j < clusters.size(); j++) {
-				Cluster cj = clusters.get(j);
-				if( ci.getID() == cj.getID() || !cj.getIsActive()) continue;
-				double minDistBetCiCj = calculateMinDistanceBetweenTwoClusters(ci, cj);
-				double DIij = minDistBetCiCj/this.maxClusterSize;
-				if(DIij < minDI){
-					minDI = DIij;
+			double maxDistaceForCi = Double.MIN_VALUE;
+			double avgDistanceForCi = calculateAverageDistanceInCluster(ci);
+			for (int j = 0; j < this.clusters.size(); j++) {
+				Cluster cj = this.clusters.get(j);
+				if(ci.getID() == cj.getID() || !cj.getIsActive()) continue;
+				double distance = calculateDaviesMeasureBetweenTwoCluster(avgDistanceForCi, ci, cj);
+				if(distance > maxDistaceForCi){
+					maxDistaceForCi = distance;
 				}
 			}
+			daviseMeasure += maxDistaceForCi;
 		}
-		return minDI;
+		return daviseMeasure/this.clusters.size();
+	}
+	
+	private double calculateDaviesMeasureBetweenTwoCluster(double avgDistanceForCi,Cluster ci ,Cluster cj){
+		double davies = 0;
+		davies = (avgDistanceForCi+calculateAverageDistanceInCluster(cj))/calculateDistanceBetweenTwoClusters(ci, cj);
+		return davies;
 	}
 	
 	/**
@@ -65,46 +61,28 @@ public class DunnIndex {
 	 * @param cj cluster cj
 	 * @return min distance between ci and cj
 	 */
-	private double calculateMinDistanceBetweenTwoClusters(Cluster ci, Cluster cj){
-		double minDist = Double.MAX_VALUE;
+	private double calculateDistanceBetweenTwoClusters(Cluster ci, Cluster cj){
+		double distance = 0;
 		ArrayList<Integer> ciPoints =	ci.getPointsIDs();
 		ArrayList<Integer> cjPoints = cj.getPointsIDs();
 		for (int i = 0; i < ciPoints.size(); i++) {
 			DatasetPoint ciPoint = this.dataset.get(ciPoints.get(i));
 			for (int j = 0; j < cjPoints.size(); j++) {
 				DatasetPoint cjPoint = this.dataset.get(cjPoints.get(j));
-				double distance = calculateDistanceBtwTwoPoints(ciPoint, cjPoint);
-				if(distance < minDist){
-					minDist = distance;
+				distance += calculateDistanceBtwTwoPoints(ciPoint, cjPoint);
 				}
 			}
-		}
-		return minDist;
+		
+		return distance/(ciPoints.size()*cjPoints.size());
 	}
 	
-	
-	/**
-	 * calculate the max cluster size
-	 * @return max cluster size
-	 */
-	private double calculateMaxClusterSize(){
-		double maxClusterSize = Double.MIN_VALUE;
-		for (int i = 0; i < this.clusters.size(); i++) {
-			Cluster c = this.clusters.get(i);
-			double clusterSize = calculateClusterSize(c);
-			if(clusterSize > maxClusterSize){
-				maxClusterSize = clusterSize;
-			}
-		}
-		return maxClusterSize;
-	}
 	
 	/**
 	 * Calculate the cluster size or diameter
 	 * @param c cluster
 	 * @return cluster size or diameter
 	 */
-	private double calculateClusterSize(Cluster c){
+	private double calculateAverageDistanceInCluster(Cluster c){
 		double size = 0;
 		ArrayList<Integer> clusterPoints = c.getPointsIDs();
 		for (int i = 0; i < clusterPoints.size(); i++) {
@@ -117,6 +95,7 @@ public class DunnIndex {
 		}
 		return size/(clusterPoints.size()*(clusterPoints.size()-1));
 	}
+
 	
 	/**
 	 * calculate the Euclidean Distance between two points
@@ -130,6 +109,6 @@ public class DunnIndex {
 		return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 	}
 
-
-
+	
+	
 }
