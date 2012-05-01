@@ -12,6 +12,8 @@ import clustering.algorithms.Cluster;
 
 import datasets.ChameleonData;
 import datasets.DatasetPoint;
+import evaluation.DaviesBouldin;
+import evaluation.DunnIndex;
 
 public class IncrementalDBSCAN {
 	
@@ -251,19 +253,19 @@ public class IncrementalDBSCAN {
 		int minPts= 21;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t5.8k.dat");
+		long startTime = System.currentTimeMillis();
 		IncrementalDBSCAN incDBSCAN = new IncrementalDBSCAN(dataset, minPts, eps);
 		incDBSCAN.run();
-		
+		long endTime = System.currentTimeMillis();
+		System.out.println("Runtime = " + (endTime-startTime));
 		
 		ArrayList<Cluster> clustersList = incDBSCAN.getClustersList();
-		int clusterCount =0;
-		for (int i = 0; i < clustersList.size(); i++) {
-			if(clustersList.get(i).getIsActive()) clusterCount++;
-		}
-		System.out.println("*************");
-		System.out.println(clustersList.size());
-		System.out.println(clusterCount);
-		System.out.println("*************");
+		
+		DunnIndex dunn = new DunnIndex(clustersList, dataset);
+		System.out.println("Dunn Index = " + dunn.calculateDunnIndex());
+		
+		DaviesBouldin davies = new DaviesBouldin(clustersList, dataset);
+		System.out.println("Davies Measure = " + davies.calculateDaviesMeasure());
 		
 		PlotIncrementalDBSCAN plotter = new PlotIncrementalDBSCAN("Clusters");
 		plotter.plot(dataset, clustersList);

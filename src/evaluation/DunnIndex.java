@@ -46,9 +46,13 @@ public class DunnIndex {
 		for (int i = 0; i < clusters.size(); i++) {
 			Cluster ci = clusters.get(i);
 			if(!ci.getIsActive()) continue;
+			if(ci.getPointsIDs().size() < 30) continue;
+
 			for (int j = 0; j < clusters.size(); j++) {
 				Cluster cj = clusters.get(j);
 				if( ci.getID() == cj.getID() || !cj.getIsActive()) continue;
+				if(cj.getPointsIDs().size() < 30) continue;
+
 				double minDistBetCiCj = calculateMinDistanceBetweenTwoClusters(ci, cj);
 				double DIij = minDistBetCiCj/this.maxClusterSize;
 				if(DIij < minDI){
@@ -91,6 +95,7 @@ public class DunnIndex {
 		double maxClusterSize = Double.MIN_VALUE;
 		for (int i = 0; i < this.clusters.size(); i++) {
 			Cluster c = this.clusters.get(i);
+			if(!c.getIsActive() || c.getPointsIDs().size() < 30) continue;
 			double clusterSize = calculateClusterSize(c);
 			if(clusterSize > maxClusterSize){
 				maxClusterSize = clusterSize;

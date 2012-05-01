@@ -29,15 +29,24 @@ public class DaviesBouldin {
 		}
 	}
 	
+	/**
+	 * calculate Davies measure
+	 * @return Davies measure
+	 */
 	public double calculateDaviesMeasure(){
 		double daviseMeasure = 0;
+		double clusterCount = 0;
 		for (int i = 0; i < this.clusters.size(); i++) {
 			Cluster ci = this.clusters.get(i);
 			if(!ci.getIsActive()) continue;
+			if(ci.getPointsIDs().size() < 30) continue;
+			clusterCount ++;
 			double maxDistaceForCi = Double.MIN_VALUE;
-			double avgDistanceForCi = calculateAverageDistanceInCluster(ci);
+			double avgDistanceForCi = calculateAverageDistanceInCluster(ci)/2;
 			for (int j = 0; j < this.clusters.size(); j++) {
 				Cluster cj = this.clusters.get(j);
+				if(cj.getPointsIDs().size() < 30) continue;
+
 				if(ci.getID() == cj.getID() || !cj.getIsActive()) continue;
 				double distance = calculateDaviesMeasureBetweenTwoCluster(avgDistanceForCi, ci, cj);
 				if(distance > maxDistaceForCi){
@@ -46,12 +55,19 @@ public class DaviesBouldin {
 			}
 			daviseMeasure += maxDistaceForCi;
 		}
-		return daviseMeasure/this.clusters.size();
+		return daviseMeasure/clusterCount;
 	}
 	
+	/**
+	 * calculate davies measure between two clusters
+	 * @param avgDistanceForCi average distance between to clusters
+	 * @param ci cluster ci
+	 * @param cj cluster cj
+	 * @return davies measure
+	 */
 	private double calculateDaviesMeasureBetweenTwoCluster(double avgDistanceForCi,Cluster ci ,Cluster cj){
 		double davies = 0;
-		davies = (avgDistanceForCi+calculateAverageDistanceInCluster(cj))/calculateDistanceBetweenTwoClusters(ci, cj);
+		davies = (avgDistanceForCi+(calculateAverageDistanceInCluster(cj)/2))/calculateDistanceBetweenTwoClusters(ci, cj);
 		return davies;
 	}
 	
@@ -62,18 +78,20 @@ public class DaviesBouldin {
 	 * @return min distance between ci and cj
 	 */
 	private double calculateDistanceBetweenTwoClusters(Cluster ci, Cluster cj){
-		double distance = 0;
+		double distance = Double.MIN_VALUE;
+		
 		ArrayList<Integer> ciPoints =	ci.getPointsIDs();
 		ArrayList<Integer> cjPoints = cj.getPointsIDs();
 		for (int i = 0; i < ciPoints.size(); i++) {
 			DatasetPoint ciPoint = this.dataset.get(ciPoints.get(i));
 			for (int j = 0; j < cjPoints.size(); j++) {
 				DatasetPoint cjPoint = this.dataset.get(cjPoints.get(j));
-				distance += calculateDistanceBtwTwoPoints(ciPoint, cjPoint);
-				}
+				double d = calculateDistanceBtwTwoPoints(ciPoint, cjPoint);
+				if(d > distance) distance = d;
 			}
-		
-		return distance/(ciPoints.size()*cjPoints.size());
+			}
+			return distance;
+	//	return distance/((ciPoints.size()-1)*(cjPoints.size()-1));
 	}
 	
 	
@@ -93,7 +111,7 @@ public class DaviesBouldin {
 				size += calculateDistanceBtwTwoPoints(point1, point2);
 			}
 		}
-		return size/(clusterPoints.size()*(clusterPoints.size()-1));
+		return size/((clusterPoints.size()-1)*(clusterPoints.size()-1));
 	}
 
 	
