@@ -116,7 +116,6 @@ public class IncrementalEnhancedDBSCAN {
 				DenseRegion r2 = this.denseRegions.get(j);
 				if(r1.getIsInCluster() && r2.getIsInCluster() && (r1.getClusterID() == r2.getClusterID())) continue;
 				double connectivity = calculateConnectivityBetweenTwoRegions(r1, r2);
-				System.out.println(connectivity);
 				if(connectivity >= alpha) mergeTwoRegions(r1, r2);
 			}
 		}
@@ -177,7 +176,6 @@ public class IncrementalEnhancedDBSCAN {
 	 */
 	private void mergeCluster(Cluster c1, Cluster c2){
 		c2.setActive(false);
-		System.out.println("Mergeing cluster " + c1.getID() + "with cluster "+ c2.getID());
 		ArrayList<DenseRegion> c2Regions = c2.getRegions();
 		for (int i = 0; i < c2Regions.size(); i++) {
 			DenseRegion r = c2Regions.get(i);
