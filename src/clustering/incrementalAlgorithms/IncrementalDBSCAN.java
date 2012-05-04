@@ -239,7 +239,7 @@ public class IncrementalDBSCAN {
 			for (int j = 0; j < neighbors.size(); j++) {
 				DatasetPoint neighbor = this.dataset.get(neighbors.get(j));
 				if(neighbor.getAssignedCluster().equalsIgnoreCase("") || !neighbor.getIsCore(this.minPts)) continue;
-				if(neighbor.getIsNoise()) continue;	
+		//		if(neighbor.getIsNoise()) continue;	
 				p.setAssignedCluster(neighbor.getAssignedCluster());
 				Cluster c = this.clustersList.get(Integer.parseInt(p.getAssignedCluster()));
 				c.addPoint(p.getID());
@@ -249,8 +249,8 @@ public class IncrementalDBSCAN {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		double eps = 7.8;
-		int minPts= 21;
+		double eps = 10;
+		int minPts= 20;
 		ChameleonData datasetLoader = new ChameleonData();
 		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/all.txt");
 		long startTime = System.currentTimeMillis();
@@ -259,19 +259,19 @@ public class IncrementalDBSCAN {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Runtime = " + (endTime-startTime));
 		
-		ArrayList<Cluster> clustersList = incDBSCAN.getClustersList();
-		
-		DunnIndex dunn = new DunnIndex(clustersList, dataset);
-		System.out.println("Dunn Index = " + dunn.calculateDunnIndex());
-		
-		DaviesBouldin davies = new DaviesBouldin(clustersList, dataset);
-		System.out.println("Davies Measure = " + davies.calculateDaviesMeasure());
-		
-		PlotIncrementalDBSCAN plotter = new PlotIncrementalDBSCAN("Clusters");
-		plotter.plot(dataset, clustersList);
-		plotter.pack();
-		RefineryUtilities.centerFrameOnScreen(plotter);
-		plotter.setVisible(true); 
+//		ArrayList<Cluster> clustersList = incDBSCAN.getClustersList();
+//		
+//		DunnIndex dunn = new DunnIndex(clustersList, dataset);
+//		System.out.println("Dunn Index = " + dunn.calculateDunnIndex());
+//		
+//		DaviesBouldin davies = new DaviesBouldin(clustersList, dataset);
+//		System.out.println("Davies Measure = " + davies.calculateDaviesMeasure());
+//		
+//		PlotIncrementalDBSCAN plotter = new PlotIncrementalDBSCAN("Clusters");
+//		plotter.plot(dataset, clustersList);
+//		plotter.pack();
+//		RefineryUtilities.centerFrameOnScreen(plotter);
+//		plotter.setVisible(true); 
 
 		
 	}

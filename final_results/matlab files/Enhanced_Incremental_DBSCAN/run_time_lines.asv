@@ -1,0 +1,19 @@
+
+number_of_objects =   [200, 500, 1000, 2000, 3000, 5000, 7000, 9000, 12000, 15000, 18000, 21000, 25000, 30000, 34000];
+
+classic_time = [0.024, 0.083, 0.148, 0.194, 0.386, 1.089, 3.198, 8.986, 17.529, 23.826, 30.114, 39.833, 53.646, 70.375, 88.942];
+
+enhanced_time = [0.014, 0.033, 0.071, 0.094, 0.104, 0.579, 1.943, 6.238, 14.257, 17.918, 23.745, 30.117, 43.574, 64.251, 71.202];
+
+plot(number_of_objects, classic_time,'-*k','LineWidth',1.4);
+hold on
+plot(number_of_objects, enhanced_time,'-.ok','LineWidth',1.4);
+hold on
+plot(number_of_partitions,t7_10k_speedup,':*k','LineWidth',1.4);
+
+leg = legend('T5-8k','T4-8k', 'T7-10K');
+set(leg,'Location','SouthEast');
+hold off
+
+xlabel('Partitions');
+ylabel('Speed Up');

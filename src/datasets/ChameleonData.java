@@ -50,12 +50,14 @@ public class ChameleonData implements DatasetsIF{
 	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	  String strLine;
 	  int id=0;
+	  int count =0;
 	  while ((strLine = br.readLine()) != null)   {
 	   String [] tokens = strLine.split(" ");
 	   String clusterID = "1";
 	   DatasetPoint p = new DatasetPoint(clusterID, Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), id);
 	   id++;
 	   dataset.add(p);
+
 	  }
 		return dataset;
 	}

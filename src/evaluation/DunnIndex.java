@@ -70,7 +70,7 @@ public class DunnIndex {
 	 * @return min distance between ci and cj
 	 */
 	private double calculateMinDistanceBetweenTwoClusters(Cluster ci, Cluster cj){
-		double minDist = Double.MAX_VALUE;
+		double minDist = 0;
 		ArrayList<Integer> ciPoints =	ci.getPointsIDs();
 		ArrayList<Integer> cjPoints = cj.getPointsIDs();
 		for (int i = 0; i < ciPoints.size(); i++) {
@@ -78,12 +78,10 @@ public class DunnIndex {
 			for (int j = 0; j < cjPoints.size(); j++) {
 				DatasetPoint cjPoint = this.dataset.get(cjPoints.get(j));
 				double distance = calculateDistanceBtwTwoPoints(ciPoint, cjPoint);
-				if(distance < minDist){
-					minDist = distance;
-				}
+				minDist+= distance;
 			}
 		}
-		return minDist;
+		return minDist/((ciPoints.size()-1)*(cjPoints.size()*1));
 	}
 	
 	

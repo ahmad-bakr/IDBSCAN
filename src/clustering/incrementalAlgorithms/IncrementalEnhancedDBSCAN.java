@@ -258,37 +258,37 @@ public class IncrementalEnhancedDBSCAN {
 	
 	
 	public static void main(String[] args) throws IOException {
-		int numPartitions =160;
-		double eps = 5;
-		int minPts= 12;
+		int numPartitions =50;
+		double eps = 10;
+		int minPts= 20;
 		double alpha = 0.01;
 		ChameleonData datasetLoader = new ChameleonData();
 
-		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/t5.8k.dat");	
+		ArrayList<DatasetPoint> dataset = datasetLoader.loadArrayList("/media/disk/master/Courses/Machine_Learning/datasets/chameleon-data/all.txt");	
 		long startTime = System.currentTimeMillis();
 		IncrementalEnhancedDBSCAN algorithm = new IncrementalEnhancedDBSCAN(dataset, numPartitions, minPts, eps, alpha);
 		algorithm.run();
 		long endTime = System.currentTimeMillis();
 		System.out.println("Runtime = " + (endTime-startTime));
 
-		ArrayList<Cluster> clusters = algorithm.getClusters();
-		ArrayList<DenseRegion> regions = new ArrayList<DenseRegion>();
-		
-
-		DunnIndex dunn = new DunnIndex(clusters, regions ,dataset);
-		System.out.println("Dunn Index = " + dunn.calculateDunnIndex());
-
-		DaviesBouldin davies = new DaviesBouldin(clusters, dataset);
-		System.out.println("Davies Measure = " + davies.calculateDaviesMeasure());
-		
-		
+//		ArrayList<Cluster> clusters = algorithm.getClusters();
+//		ArrayList<DenseRegion> regions = new ArrayList<DenseRegion>();
+//		
+//
+//		DunnIndex dunn = new DunnIndex(clusters, regions ,dataset);
+//		System.out.println("Dunn Index = " + dunn.calculateDunnIndex());
+//
+//		DaviesBouldin davies = new DaviesBouldin(clusters, dataset);
+//		System.out.println("Davies Measure = " + davies.calculateDaviesMeasure());
 		
 		
-		PlotEhancedDBSCAN plotter = new PlotEhancedDBSCAN("Clusters");
-		plotter.plot(dataset, clusters);
-		plotter.pack();
-		RefineryUtilities.centerFrameOnScreen(plotter);
-		plotter.setVisible(true); 
+		
+		
+//		PlotEhancedDBSCAN plotter = new PlotEhancedDBSCAN("Clusters");
+//		plotter.plot(dataset, clusters);
+//		plotter.pack();
+//		RefineryUtilities.centerFrameOnScreen(plotter);
+//		plotter.setVisible(true); 
 
 	}
 }
